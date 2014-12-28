@@ -1,11 +1,11 @@
 package com.epam.pool;
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.log4j.Logger;
 
 public class ConnectionPool {
     private String driverName;
@@ -15,6 +15,7 @@ public class ConnectionPool {
     private int maxConn;
     private ArrayList<Connection> freeConnections = new ArrayList<Connection>();
     private static ConnectionPool instance;
+    private static final Logger logger = Logger.getLogger(ConnectionPool.class);
 
     private ConnectionPool(String driverName, String url, String user, String password, int maxConn) {
         this.driverName = driverName;
@@ -22,24 +23,12 @@ public class ConnectionPool {
         this.user = user;
         this.password = password;
         this.maxConn = maxConn;
-        loadDrivers();
-    }
-
-    private void loadDrivers(){
         try {
-            Driver driver = (Driver) Class.forName(driverName).newInstance();
-            DriverManager.registerDriver(driver);
-        } catch (ClassNotFoundException e){
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            Class.forName(driverName);
+        } catch (ClassNotFoundException e) {
+            logger.error(e);
         }
     }
-
 
     public synchronized Connection getConnection(){
         Connection connection = null;

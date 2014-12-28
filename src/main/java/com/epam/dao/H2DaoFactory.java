@@ -65,6 +65,12 @@ public class H2DaoFactory extends DaoFactory {
         return new H2CarDao(connection);
     }
 
+    @Override
+    public OrderDao getOrderDao() throws DaoException {
+        if (connection == null) throw new DaoException("no connection");
+        return new H2OrderDao(connection);
+    }
+
     public void close(){
         connectionPool.freeConnection(connection);
         try {

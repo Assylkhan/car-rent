@@ -27,5 +27,20 @@
         <servlet-name>Image</servlet-name>
         <url-pattern>/image/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ErrorHandler</servlet-name>
+        <servlet-class>com.epam.servlet.ErrorHandler</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>ErrorHandler</servlet-name>
+        <url-pattern>/ErrorHandler</url-pattern>
+    </servlet-mapping>
+    
+    <error-page>
+        <location>/do/error</location>
+    </error-page>
+    
 
 </web-app>

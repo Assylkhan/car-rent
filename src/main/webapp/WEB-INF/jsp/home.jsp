@@ -10,6 +10,7 @@
     <title>Home</title>
 </head>
 <body>
+<%@include file="header.jspf"%>
 <%--todo: use jstl in href--%>
 Cars gallery
 <br/>

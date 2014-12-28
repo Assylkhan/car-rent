@@ -104,10 +104,10 @@ public class H2UserDao implements UserDao {
             user.setId(resultSet.getLong("ID"));
             user.setPassword(password);
             return user;
-
         } catch (Exception e) {
             throw new DaoException();
         }
+
     }
 
     @Override

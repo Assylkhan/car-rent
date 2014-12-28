@@ -26,6 +26,7 @@ public class LoginAction implements Action {
         DaoFactory factory = DaoFactory.getDaoFacroty(DaoFactory.H2);
         if (factory instanceof H2DaoFactory){
             H2DaoFactory h2DaoFactory = (H2DaoFactory) factory;
+            h2DaoFactory.close();
             h2DaoFactory.setConnectionPool(ConnectionPool.getInstance(driver, url, dbUser, pass, 10));
             try {
                 h2DaoFactory.createConnection();
@@ -42,6 +43,7 @@ public class LoginAction implements Action {
         } catch (DaoException e) {
 
         }
+
 
         if (user != null){
             HttpSession session = req.getSession();

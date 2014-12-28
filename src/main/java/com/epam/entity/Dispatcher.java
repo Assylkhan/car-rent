@@ -1,6 +1,6 @@
 package com.epam.entity;
 
-public class Administrator extends BaseEntity {
+public class Dispatcher extends BaseEntity {
     private String fullName;
 
     public String getFullName() {

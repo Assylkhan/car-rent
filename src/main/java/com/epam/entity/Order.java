@@ -3,15 +3,33 @@ package com.epam.entity;
 import java.util.Date;
 
 public class Order extends BaseEntity {
+    private Long userId;
     private PassportInfo passportInfo;
-    private Date rentTerm;
+    private Date pickupDate;
+    private Date returnDate;
 
-    public Date getRentTerm() {
-        return rentTerm;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setRentTerm(Date rentTerm) {
-        this.rentTerm = rentTerm;
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Date getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(Date returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public Date getPickupDate() {
+        return pickupDate;
+    }
+
+    public void setPickupDate(Date pickupDate) {
+        this.pickupDate = pickupDate;
     }
 
     public PassportInfo getPassportInfo() {
