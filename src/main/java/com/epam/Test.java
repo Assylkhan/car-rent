@@ -6,7 +6,6 @@ import com.epam.dao.H2DaoFactory;
 import com.epam.dao.UserDao;
 import com.epam.pool.ConnectionPool;
 
-import java.sql.*;
 import java.util.ResourceBundle;
 import java.util.Timer;
 
@@ -22,9 +21,11 @@ public class Test {
         DaoFactory h2DaoFactory = DaoFactory.getDaoFacroty(Database.H2);
         if (h2DaoFactory instanceof H2DaoFactory) {
             H2DaoFactory h2 = (H2DaoFactory) h2DaoFactory;
-            h2.setConnectionPool(ConnectionPool.getInstance(driver, url, dbUser, pass, 10));
+//            h2.setConnectionPool(ConnectionPool.getInstance(driver, url, dbUser, pass, 10));
         }
         UserDao userDao = h2DaoFactory.getUserDao();
+
+
 
         ResourceBundle resource = ResourceBundle.getBundle("database");
         String url = resource.getString("url");

@@ -1,9 +1,6 @@
 package com.epam.servlet;
 
-import com.epam.dao.CarDao;
-import com.epam.dao.DaoException;
-import com.epam.dao.DaoFactory;
-import com.epam.dao.H2DaoFactory;
+import com.epam.dao.*;
 import com.epam.entity.Car;
 import com.epam.pool.ConnectionPool;
 
@@ -35,10 +32,10 @@ public class ImageServlet extends HttpServlet {
 
         if (carId == null) return;
 
-        DaoFactory factory = DaoFactory.getDaoFacroty(DaoFactory.H2);
+        DaoFactory factory = DaoFactory.getDaoFacroty(Database.H2);
         if (factory instanceof H2DaoFactory){
             H2DaoFactory h2DaoFactory = (H2DaoFactory) factory;
-            h2DaoFactory.setConnectionPool(ConnectionPool.getInstance(driver, url, dbUser, pass, 10));
+//            h2DaoFactory.setConnectionPool(ConnectionPool.getInstance(driver, url, dbUser, pass, 10));
             try {
                 h2DaoFactory.createConnection();
             } catch (DaoException e) {

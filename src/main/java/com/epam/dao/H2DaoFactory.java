@@ -4,16 +4,41 @@ import com.epam.pool.ConnectionPool;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 public class H2DaoFactory extends DaoFactory {
-    private static ConnectionPool connectionPool = null;
+    private static final ResourceBundle resource = ResourceBundle.getBundle("Database");
+    private ConnectionPool connectionPool = null;
     private Connection connection;
+    private String url = resource.getString("url");
+    private String driver = resource.getString("driver");
+    private String dbUser = resource.getString("user");
+    private String pass = resource.getString("password");
+
+    public H2DaoFactory(){
+        initConnectionPool();
+    }
+
     public void setConnectionPool(ConnectionPool connectionPool){
         this.connectionPool = connectionPool;
     };
 
+    public void initConnectionPool(){
+        connectionPool = ConnectionPool.getInstance();
+        connectionPool.setDriverClassName(driver);
+        connectionPool.setUrl(url);
+        connectionPool.setUser(dbUser);
+        connectionPool.setPassword(pass);
+        connectionPool.setConnectionNumber(10);
+        try {
+            connectionPool.initConnections();
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+        createConnection();
+    }
+
     public Connection createConnection() throws DaoException{
-//        connection = null;
         try{
             connection = connectionPool.getConnection();
         } catch (Exception e){
@@ -37,7 +62,7 @@ public class H2DaoFactory extends DaoFactory {
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-
+            throw new DaoException(e);
         }
     }
 
@@ -47,8 +72,18 @@ public class H2DaoFactory extends DaoFactory {
             connection.rollback();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
+    }
+
+    @Override
+    public void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+
     }
 
     @Override
@@ -69,15 +104,6 @@ public class H2DaoFactory extends DaoFactory {
     public OrderDao getOrderDao() throws DaoException {
         if (connection == null) throw new DaoException("no connection");
         return new H2OrderDao(connection);
-    }
-
-    public void close(){
-        connectionPool.freeConnection(connection);
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
 }
