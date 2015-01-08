@@ -1,19 +1,27 @@
 package com.epam.entity;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Order extends BaseEntity {
-    private Long userId;
-    private PassportInfo passportInfo;
+    private Client client;
+    private Long carId;
     private Date pickupDate;
     private Date returnDate;
 
-    public Long getUserId() {
-        return userId;
+    public Long getCarId() {
+        return carId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setCarId(Long carId) {
+        this.carId = carId;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public Date getReturnDate() {
@@ -30,14 +38,6 @@ public class Order extends BaseEntity {
 
     public void setPickupDate(Date pickupDate) {
         this.pickupDate = pickupDate;
-    }
-
-    public PassportInfo getPassportInfo() {
-        return passportInfo;
-    }
-
-    public void setPassportInfo(PassportInfo passportInfo) {
-        this.passportInfo = passportInfo;
     }
 
 }

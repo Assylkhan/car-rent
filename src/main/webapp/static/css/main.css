@@ -1,0 +1,6 @@
+body {
+    background: rgba(118, 159, 255, 0.56);
+}
+.form-group>* {
+    display: block;
+}

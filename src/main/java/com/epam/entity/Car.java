@@ -1,16 +1,23 @@
 package com.epam.entity;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
 
 public class Car extends BaseEntity {
     private String model;
     private BodyType bodyType;
     private BigDecimal costPerDay;
     private String state;
-    private String imagePath;
+    private String imageName;
     private String description;
     private Boolean isFree;
+
+    public BigDecimal getCostPerDay() {
+        return costPerDay;
+    }
+
+    public void setCostPerDay(BigDecimal costPerDay) {
+        this.costPerDay = costPerDay;
+    }
 
 
     public BodyType getBodyType() {
@@ -29,12 +36,12 @@ public class Car extends BaseEntity {
         this.isFree = isFree;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public String getDescription() {

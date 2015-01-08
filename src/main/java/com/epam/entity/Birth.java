@@ -1,6 +1,6 @@
 package com.epam.entity;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Birth {
     private Date birthDate;

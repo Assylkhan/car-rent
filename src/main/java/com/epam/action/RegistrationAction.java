@@ -1,7 +1,9 @@
 package com.epam.action;
 
 import com.epam.dao.*;
+import com.epam.entity.Client;
 import com.epam.entity.User;
+import com.epam.util.InputValidator;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,27 +19,32 @@ public class RegistrationAction implements Action {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
         String confirmPass = req.getParameter("confirmPass");
-
+        req.setAttribute("emailError", "");
+        if (!InputValidator.email(email)){
+            req.setAttribute("emailError", "incorrect email");
+            return registerAgain;
+        }
         if (!password.equals(confirmPass)) {
-            req.setAttribute("confirmError", "password and confirmation don't match");
+            req.setAttribute("confirmError", "confirmation doesn't match");
             return registerAgain;
         }
 
-        DaoFactory factory = DaoFactory.getDaoFacroty(Database.H2);
-        User createdUser = null;
-        User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setPassword(password);
+        DaoFactory factory = DaoFactory.getDaoFactory(Database.H2);
+        DaoManager daoManager = factory.getDaoManager();
+        Client newClient = new Client();
+        newClient.setEmail(email);
+        newClient.setPassword(password);
+        User createdClient = null;
         try {
-            UserDao userDao = factory.getUserDao();
-            createdUser = userDao.create(newUser);
+            ClientDao userDao = daoManager.getClientDao();
+            createdClient = userDao.insert(newClient);
         } catch (DaoException e) {
             logger.error(e);
         } finally {
-            factory.closeConnection();
+            daoManager.closeConnection();
         }
 
-        if (createdUser != null)
+        if (createdClient != null)
             return new LoginAction().execute(req, resp);
         else {
             req.setAttribute("loginError", "login or password incorrect");

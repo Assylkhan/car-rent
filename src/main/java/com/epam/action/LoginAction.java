@@ -1,13 +1,12 @@
 package com.epam.action;
 
 import com.epam.dao.*;
-import com.epam.entity.User;
-import com.epam.pool.ConnectionPool;
+import com.epam.entity.Client;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.ResourceBundle;
 
 public class LoginAction implements Action {
     ActionResult home = new ActionResult("home", true);
@@ -18,19 +17,26 @@ public class LoginAction implements Action {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        DaoFactory factory = DaoFactory.getDaoFacroty(Database.H2);
-        User user = null;
+
+        DaoFactory factory = DaoFactory.getDaoFactory(Database.H2);
+        DaoManager daoManager = factory.getDaoManager();
+        Client client = null;
         try {
-            UserDao userDao = factory.getUserDao();
-            user = userDao.findByCredentials(email, password);
+            ClientDao clientDao = daoManager.getClientDao();
+            client = clientDao.findByCredentials(email, password);
         } catch (DaoException e) {
             System.err.println(e);
+        } finally {
+            daoManager.closeConnection();
         }
 
-
-        if (user != null){
+        if (client != null){
             HttpSession session = req.getSession();
-            session.setAttribute("user", user);
+            session.setAttribute("client", client);
+            String id = session.getId();
+            Cookie cookie = new Cookie("sessionId", id);
+            cookie.setMaxAge(24*60*60); //24 hours
+            resp.addCookie(cookie);
             return home;
         } else {
             req.setAttribute("loginError", "login or password incorrect");

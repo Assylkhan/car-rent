@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 
 public class ShowCarsAction implements Action {
     private static final Logger logger = Logger.getLogger(ShowCarsAction.class);
@@ -15,15 +16,17 @@ public class ShowCarsAction implements Action {
 
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
-        DaoFactory factory = DaoFactory.getDaoFacroty(Database.H2);
+        req.getSession().setAttribute("locale", Locale.forLanguageTag("ru"));
+        DaoFactory factory = DaoFactory.getDaoFactory(Database.H2);
+        DaoManager daoManager = factory.getDaoManager();
         try {
-            CarDao carDao = factory.getCarDao();
+            CarDao carDao = daoManager.getCarDao();
             List<Car> carList = carDao.findAll();
             req.setAttribute("cars", carList);
         } catch (DaoException e) {
             logger.log(Level.ERROR, e);
         } finally {
-            factory.closeConnection();
+            daoManager.closeConnection();
         }
         return result;
     }

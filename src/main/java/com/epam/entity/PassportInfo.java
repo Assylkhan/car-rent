@@ -1,8 +1,8 @@
 package com.epam.entity;
 
-import java.util.Date;
+import java.sql.Date;
 
-public class PassportInfo {
+public class PassportInfo extends BaseEntity{
     private String surname;
     private String name;
     private String citizenship;
@@ -73,6 +73,6 @@ public class PassportInfo {
     }
 
     public void setSurname(String surname) {
-        surname = surname;
+        this.surname = surname;
     }
 }

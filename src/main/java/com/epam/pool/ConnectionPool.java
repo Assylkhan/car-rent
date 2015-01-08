@@ -9,7 +9,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class ConnectionPool {
-    private static ConnectionPool pool = new ConnectionPool();
     private String driverClassName;
     private String url;
     private String user;
@@ -18,28 +17,39 @@ public class ConnectionPool {
     private Semaphore semaphore;
     private List<PooledConnection> freeConnections;
     private static final Logger logger = Logger.getLogger(ConnectionPool.class);
+    private static ResourceBundle bundle = ResourceBundle.getBundle("database");
 
-    private ConnectionPool() {
+    public ConnectionPool(){}
+
+    public ConnectionPool(ResourceBundle bundle){
+        url = bundle.getString("url");
+        driverClassName = bundle.getString("driver");
+        user = bundle.getString("user");
+        password = bundle.getString("password");
     }
 
-    public static ConnectionPool getInstance(){
-        return pool;
+    public ConnectionPool(String driver, String url, String user, String password ){
+        this.driverClassName = driver;
+        this.url = url;
+        this.user = user;
+        this.password = password;
     }
 
     public void initConnections() throws SQLException {
         try {
             Class.forName(driverClassName);
-            semaphore = new Semaphore(connectionNumber);
-            freeConnections = new LinkedList<PooledConnection>();
-            for (int i = 0; i < connectionNumber; i++) {
-                Connection connection = DriverManager.getConnection(url, user, password);
-                PooledConnection pooledConnection = new PooledConnection(connection);
-                freeConnections.add(pooledConnection);
-                logger.log(Level.INFO, connectionNumber + " connections created");
-            }
         } catch (ClassNotFoundException e) {
             logger.log(Level.ERROR, null, e);
         }
+        semaphore = new Semaphore(connectionNumber);
+        freeConnections = new LinkedList<PooledConnection>();
+
+        for (int i = 0; i < connectionNumber; i++) {
+            Connection connection = DriverManager.getConnection(url, user, password);
+            PooledConnection pooledConnection = new PooledConnection(connection);
+            freeConnections.add(pooledConnection);
+        }
+        logger.info(connectionNumber + " connections created");
     }
 
     public void setConnectionNumber(int connectionNumber) {
@@ -50,12 +60,11 @@ public class ConnectionPool {
         PooledConnection pooledConnection = null;
         try {
             semaphore.acquire();
-            System.out.println("acquired: " + semaphore.availablePermits());
-            pooledConnection = freeConnections.remove(0);
-            return pooledConnection;
         } catch (InterruptedException e) {
             logger.log(Level.ERROR, null, e);
         }
+        System.out.println("available connections: " + semaphore.availablePermits());
+        pooledConnection = freeConnections.remove(0);
         return pooledConnection;
     }
 
@@ -81,7 +90,7 @@ public class ConnectionPool {
     }
 
     private class PooledConnection implements Connection {
-        Connection connection;
+        private Connection connection;
 
         public PooledConnection(Connection connection) throws SQLException {
             this.connection = connection;
@@ -134,6 +143,7 @@ public class ConnectionPool {
                 connection.setReadOnly(false);
             }
             freeConnections.add(this);
+            System.out.println("released connection");
             semaphore.release();
         }
 

@@ -10,22 +10,17 @@ public class H2CarDao implements CarDao {
     private Connection connection = null;
 
     @Override
-    public void insert(Car car) {
-
-    }
-
-    @Override
-    public Car create(Car car) {
+    public Car insert(Car car) {
         return null;
     }
 
     @Override
-    public boolean delete(Car car) {
-        return false;
+    public Car update(Car car) {
+        return null;
     }
 
     @Override
-    public boolean update(Car car) {
+    public boolean deleteById(Long id) throws DaoException {
         return false;
     }
 
@@ -45,7 +40,7 @@ public class H2CarDao implements CarDao {
             car.setIsFree(resultSet.getBoolean("isFree"));
             car.setDescription(resultSet.getString("description"));
             car.setState(resultSet.getString("state"));
-            car.setImagePath(resultSet.getString("image_path"));
+            car.setImageName(resultSet.getString("image_name"));
 
             return car;
         } catch (SQLException e) {
@@ -66,7 +61,7 @@ public class H2CarDao implements CarDao {
                 car.setModel(resultSet.getString("MODEL"));
                 car.setIsFree(resultSet.getBoolean("ISFREE"));
                 car.setState(resultSet.getString("STATE"));
-                car.setImagePath(resultSet.getString("IMAGE_PATH"));
+                car.setImageName(resultSet.getString("IMAGE_NAME"));
                 car.setDescription(resultSet.getString("Description"));
                 cars.add(car);
             }
@@ -75,8 +70,6 @@ public class H2CarDao implements CarDao {
             throw new DaoException();
         }
     }
-
-
 
     public H2CarDao(Connection connection) {
         this.connection = connection;
