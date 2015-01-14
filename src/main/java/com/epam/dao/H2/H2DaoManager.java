@@ -1,4 +1,6 @@
-package com.epam.dao;
+package com.epam.dao.H2;
+
+import com.epam.dao.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -63,8 +65,8 @@ public class H2DaoManager implements DaoManager {
     }
 
     @Override
-    public OrderDao getOrderDao() throws DaoException {
+    public ApplicationDao getApplicationDao() throws DaoException {
         if (connection == null) throw new DaoException("no connection");
-        return new H2OrderDao(connection);
+        return new H2ApplicationDao(connection);
     }
 }

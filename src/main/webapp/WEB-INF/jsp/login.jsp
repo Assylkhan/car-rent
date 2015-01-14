@@ -6,7 +6,7 @@
 <body>
 <div>
   <form action="${pageContext.request.contextPath}/do/login" method="post">
-    Email: <input type="text" name="email"/>
+    Login: <input type="text" name="login"/>
     Password: <input type="password" name="password"/>
     <button type="submit">Login</button>
     <div style="color:red">${loginError}</div>

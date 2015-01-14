@@ -7,5 +7,5 @@ public interface DaoManager {
     public abstract void closeConnection();
     public abstract ClientDao getClientDao() throws DaoException;
     public abstract CarDao getCarDao() throws DaoException;
-    public abstract OrderDao getOrderDao() throws DaoException;
+    public abstract ApplicationDao getApplicationDao() throws DaoException;
 }

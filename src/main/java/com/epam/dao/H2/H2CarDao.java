@@ -1,6 +1,9 @@
-package com.epam.dao;
+package com.epam.dao.H2;
 
+import com.epam.dao.CarDao;
+import com.epam.dao.DaoException;
 import com.epam.entity.Car;
+import com.epam.entity.Destination;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,9 +40,10 @@ public class H2CarDao implements CarDao {
             Car car = new Car();
             car.setId(resultSet.getLong("id"));
             car.setModel(resultSet.getString("model"));
-            car.setIsFree(resultSet.getBoolean("isFree"));
-            car.setDescription(resultSet.getString("description"));
+            car.setGovNumber(resultSet.getString("gov_number"));
+            car.setDestination(Destination.valueOf(resultSet.getString("destination")));
             car.setState(resultSet.getString("state"));
+            car.setYear(resultSet.getString("Year"));
             car.setImageName(resultSet.getString("image_name"));
 
             return car;
@@ -57,12 +61,13 @@ public class H2CarDao implements CarDao {
             ResultSet resultSet = statement.executeQuery("SELECT * from CAR");
             while (resultSet.next()){
                 Car car = new Car();
-                car.setId(resultSet.getLong("ID"));
-                car.setModel(resultSet.getString("MODEL"));
-                car.setIsFree(resultSet.getBoolean("ISFREE"));
-                car.setState(resultSet.getString("STATE"));
-                car.setImageName(resultSet.getString("IMAGE_NAME"));
-                car.setDescription(resultSet.getString("Description"));
+                car.setId(resultSet.getLong("id"));
+                car.setModel(resultSet.getString("model"));
+                car.setGovNumber(resultSet.getString("gov_number"));
+                car.setDestination(Destination.valueOf(resultSet.getString("destination")));
+                car.setState(resultSet.getString("state"));
+                car.setYear(resultSet.getString("year"));
+                car.setImageName(resultSet.getString("image_name"));
                 cars.add(car);
             }
             return cars;

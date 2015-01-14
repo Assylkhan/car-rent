@@ -18,7 +18,7 @@ public class LoginAction implements Action {
         String password = req.getParameter("password");
 
 
-        DaoFactory factory = DaoFactory.getDaoFactory(Database.H2);
+        DaoFactory factory = DaoFactory.getDaoFactory(DatabaseType.H2);
         DaoManager daoManager = factory.getDaoManager();
         Client client = null;
         try {

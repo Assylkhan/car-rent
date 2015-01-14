@@ -1,22 +1,15 @@
 package com.epam.entity;
 
+import java.math.BigDecimal;
+
 public class Client extends User {
-    private String email;
-    private PassportInfo passportInfo;
+    private BigDecimal bill;
 
-    public String getEmail() {
-        return email;
+    public BigDecimal getBill() {
+        return bill;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public PassportInfo getPassportInfo() {
-        return passportInfo;
-    }
-
-    public void setPassportInfo(PassportInfo passportInfo) {
-        this.passportInfo = passportInfo;
+    public void setBill(BigDecimal bill) {
+        this.bill = bill;
     }
 }

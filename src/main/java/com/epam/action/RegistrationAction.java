@@ -12,28 +12,25 @@ import javax.servlet.http.HttpServletResponse;
 public class RegistrationAction implements Action {
     ActionResult registerAgain = new ActionResult("register");
     private static final Logger logger = Logger.getLogger(RegistrationAction.class);
-
+    private static String login;
+    private static String password;
+    private static String confirmPass;
+    private static String firstName;
+    private static String lastName;
 
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String confirmPass = req.getParameter("confirmPass");
-        req.setAttribute("emailError", "");
-        if (!InputValidator.email(email)){
-            req.setAttribute("emailError", "incorrect email");
-            return registerAgain;
-        }
-        if (!password.equals(confirmPass)) {
-            req.setAttribute("confirmError", "confirmation doesn't match");
-            return registerAgain;
-        }
+        boolean valid = validateFields(req);
 
-        DaoFactory factory = DaoFactory.getDaoFactory(Database.H2);
+        req.setAttribute("loginError", "");
+
+        DaoFactory factory = DaoFactory.getDaoFactory(DatabaseType.H2);
         DaoManager daoManager = factory.getDaoManager();
         Client newClient = new Client();
-        newClient.setEmail(email);
+        newClient.setLogin(login);
         newClient.setPassword(password);
+        newClient.setFirstName(firstName);
+        newClient.setLastName(lastName);
         User createdClient = null;
         try {
             ClientDao userDao = daoManager.getClientDao();
@@ -50,5 +47,24 @@ public class RegistrationAction implements Action {
             req.setAttribute("loginError", "login or password incorrect");
             return registerAgain;
         }
+    }
+
+    private boolean validateFields(HttpServletRequest req) {
+        boolean isValid = true;
+        firstName = req.getParameter("firstName");
+        lastName = req.getParameter("lastName");
+        login = req.getParameter("login");
+        password = req.getParameter("password");
+        confirmPass = req.getParameter("confirmPass");
+
+        if (!InputValidator.login(login)){
+            req.setAttribute("loginError", "incorrect login");
+            isValid = false;
+        }
+        if (!password.equals(confirmPass)) {
+            req.setAttribute("confirmError", "confirmation doesn't match");
+            isValid = false;
+        }
+        return isValid;
     }
 }

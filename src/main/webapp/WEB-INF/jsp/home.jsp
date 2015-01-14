@@ -43,6 +43,6 @@
     </c:forEach>
 </div>
 
-<c:if test="${not empty sessionScope.client}">Hello, ${client.email}! You are logged in! </c:if><br/>
+<c:if test="${not empty sessionScope.client}">Hello, ${client.login}! You are logged in! </c:if><br/>
 </body>
 </html>

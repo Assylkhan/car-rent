@@ -1,5 +1,5 @@
 package com.epam.dao;
 
-public enum Database {
+public enum DatabaseType {
     H2, MYSQL,
 }

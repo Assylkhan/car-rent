@@ -1,3 +1,3 @@
 package com.epam.entity;
 
-public enum Role {ADMINISTRATOR, CLIENT}
+public enum Role {ADMIN, DISPATCHER, CLIENT,}

@@ -1,14 +1,17 @@
-package com.epam.dao;
+package com.epam.dao.H2;
 
+import com.epam.dao.ClientDao;
+import com.epam.dao.DaoException;
 import com.epam.entity.Client;
-import com.epam.entity.PassportInfo;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class H2ClientDao implements ClientDao {
-    public static final String INSERT_PASSPORT_INFO = "INSERT INTO PASSPORT_INFO (SURNAME, NAME, CITIZENSHIP, GENDER, BIRTH_DATE, BIRTH_PLACE, ISSUED_AGENCY_NAME, ISSUED_DATE, VALIDITY) VALUES (?,?,?,?,?,?,?,?,?)";
+    public static final String INSERT_CLIENT = "INSERT INTO USER (LOGIN, PASSWORD, FIRST_NAME, LAST_NAME) VALUES (?, ?, ?, ?)";
+    public static final String SELECT_BY_LOGIN = "SELECT * FROM USER WHERE LOGIN = ?";
+    public static final String SELECT_BY_LOGIN_AND_PASSWORD = "SELECT * FROM USER WHERE LOGIN = ? AND PASSWORD = ?";
     private Connection connection = null;
 
     public H2ClientDao(Connection connection) {
@@ -19,9 +22,11 @@ public class H2ClientDao implements ClientDao {
     public Client insert(Client client) throws DaoException {
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("INSERT INTO USER (EMAIL, PASSWORD) VALUES (?, ?)");
-            statement.setString(1, client.getEmail());
+            statement = connection.prepareStatement(INSERT_CLIENT);
+            statement.setString(1, client.getLogin());
             statement.setString(2, client.getPassword());
+            statement.setString(3, client.getFirstName());
+            statement.setString(4, client.getLastName());
             statement.execute();
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) {
@@ -66,8 +71,11 @@ public class H2ClientDao implements ClientDao {
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.next()) {
                 client.setId(resultSet.getLong("id"));
-                client.setEmail(resultSet.getString("email"));
+                client.setLogin(resultSet.getString("login"));
                 client.setPassword(resultSet.getString("password"));
+                client.setFirstName(resultSet.getString("first_name"));
+                client.setLastName(resultSet.getString("last_name"));
+                client.setBill(resultSet.getBigDecimal("bill"));
             }
             return client;
         } catch (SQLException e) {
@@ -76,17 +84,20 @@ public class H2ClientDao implements ClientDao {
     }
 
     @Override
-    public Client findByEmail(String email) throws DaoException {
+    public Client findByLogin(String login) throws DaoException {
         Client client = new Client();
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT * FROM USER WHERE EMAIL = ?");
-            statement.setString(1, email);
-            ResultSet resultSet = statement.getResultSet();
+            statement = connection.prepareStatement(SELECT_BY_LOGIN);
+            statement.setString(1, login);
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 client.setId(resultSet.getLong("id"));
-                client.setEmail(resultSet.getString("email"));
+                client.setLogin(resultSet.getString("login"));
                 client.setPassword(resultSet.getString("password"));
+                client.setFirstName(resultSet.getString("first_name"));
+                client.setLastName(resultSet.getString("last_name"));
+                client.setBill(resultSet.getBigDecimal("bill"));
             }
             return client;
         } catch (SQLException e) {
@@ -95,51 +106,27 @@ public class H2ClientDao implements ClientDao {
     }
 
     @Override
-    public Client findByCredentials(String email, String password) throws DaoException {
+    public Client findByCredentials(String login, String password) throws DaoException {
         Client client = new Client();
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT * FROM USER WHERE EMAIL = ? AND PASSWORD = ?");
-            statement.setString(1, email);
+            statement = connection.prepareStatement(SELECT_BY_LOGIN_AND_PASSWORD);
+            statement.setString(1, login);
             statement.setString(2, password);
             boolean isResult = statement.execute();
             if (!isResult) return null;
 
             ResultSet resultSet = statement.getResultSet();
             resultSet.next();
-            client.setEmail(email);
             client.setId(resultSet.getLong("ID"));
+            client.setLogin(login);
             client.setPassword(password);
+            client.setFirstName(resultSet.getString("first_name"));
+            client.setLastName(resultSet.getString("last_name"));
+            client.setBill(resultSet.getBigDecimal("bill"));
             return client;
         } catch (Exception e) {
             throw new DaoException();
-        }
-    }
-
-    @Override
-    public PassportInfo insertPassportInfo(PassportInfo passport) throws DaoException {
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(INSERT_PASSPORT_INFO);
-            statement.setString(1,passport.getSurname());
-            statement.setString(2,passport.getName());
-            statement.setString(3,passport.getCitizenship());
-            statement.setString(4,passport.getGender());
-            statement.setDate(5, passport.getBirth().getBirthDate());
-            statement.setString(6, passport.getBirth().getBirthPlace());
-            statement.setString(7, passport.getIssuedAgencyName());
-            statement.setDate(8, passport.getIssuedDate());
-            statement.setDate(9, passport.getValidity());
-
-            boolean isResult = statement.execute();
-            if (!isResult) return null;
-            ResultSet resultSet = statement.getResultSet();
-            resultSet.next();
-            long id = resultSet.getLong("ID");
-            passport.setId(id);
-            return passport;
-        } catch (SQLException e){
-            throw new DaoException(e);
         }
     }
 
@@ -153,8 +140,11 @@ public class H2ClientDao implements ClientDao {
             ResultSet resultSet = statement.executeQuery("SELECT * FROM USER");
             while (resultSet.next()) {
                 client.setId(resultSet.getLong("ID"));
-                client.setEmail(resultSet.getString("EMAIL"));
-                client.setPassword(resultSet.getString("PASSWORD"));
+                client.setLogin(resultSet.getString("login"));
+                client.setPassword(resultSet.getString("password"));
+                client.setFirstName(resultSet.getString("first_name"));
+                client.setLastName(resultSet.getString("last_name"));
+                client.setBill(resultSet.getBigDecimal("bill"));
                 clients.add(client);
             }
         } catch (Exception e) {

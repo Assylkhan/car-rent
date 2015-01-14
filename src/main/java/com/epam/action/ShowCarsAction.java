@@ -17,7 +17,7 @@ public class ShowCarsAction implements Action {
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
         req.getSession().setAttribute("locale", Locale.forLanguageTag("ru"));
-        DaoFactory factory = DaoFactory.getDaoFactory(Database.H2);
+        DaoFactory factory = DaoFactory.getDaoFactory(DatabaseType.H2);
         DaoManager daoManager = factory.getDaoManager();
         try {
             CarDao carDao = daoManager.getCarDao();

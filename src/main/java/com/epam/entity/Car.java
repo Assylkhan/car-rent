@@ -1,40 +1,14 @@
 package com.epam.entity;
 
-import java.math.BigDecimal;
+import java.time.Year;
 
 public class Car extends BaseEntity {
+    private String govNumber;
     private String model;
-    private BodyType bodyType;
-    private BigDecimal costPerDay;
+    private Destination destination;
+    private String year;
     private String state;
     private String imageName;
-    private String description;
-    private Boolean isFree;
-
-    public BigDecimal getCostPerDay() {
-        return costPerDay;
-    }
-
-    public void setCostPerDay(BigDecimal costPerDay) {
-        this.costPerDay = costPerDay;
-    }
-
-
-    public BodyType getBodyType() {
-        return bodyType;
-    }
-
-    public void setBodyType(BodyType bodyType) {
-        this.bodyType = bodyType;
-    }
-
-    public Boolean getIsFree() {
-        return isFree;
-    }
-
-    public void setIsFree(Boolean isFree) {
-        this.isFree = isFree;
-    }
 
     public String getImageName() {
         return imageName;
@@ -44,12 +18,36 @@ public class Car extends BaseEntity {
         this.imageName = imageName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getModel() {
+        return model;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public Destination getDestination() {
+        return destination;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getGovNumber() {
+        return govNumber;
+    }
+
+    public void setGovNumber(String govNumber) {
+        this.govNumber = govNumber;
     }
 
     public String getState() {
@@ -58,13 +56,5 @@ public class Car extends BaseEntity {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
     }
 }

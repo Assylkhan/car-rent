@@ -2,8 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <link rel="stylesheet" href="/static/css/bootstrap.css">
-    <link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+    <link rel='stylesheet' href='webjars/bootstrap/3.3.1/css/bootstrap.min.css'>
     <link rel="stylesheet" href="/static/css/main.css">
     <title>Registration</title>
 </head>
@@ -11,8 +10,11 @@
 <%@ include file="header.jspf"%>
 <div class="container-fluid">
     <form action="${pageContext.request.contextPath}/do/register" method="post">
-        <strong style="color: darkred">${emailError}</strong> <br/>
-        <div class="form-group"><input type="text" placeholder="email" name="email"/></div>
+        <strong style="color: darkred">${loginError}</strong> <br/>
+
+        <div class="form-group"><input type="text" placeholder="first name" name="firstName"/></div>
+        <div class="form-group"><input type="text" placeholder="last name" name="lastName"/></div>
+        <div class="form-group"><input type="text" placeholder="login" name="login"/></div>
         <div class="form-group"><input type="password" placeholder="password" name="password"/></div>
         <div class="form-group"><input type="password" placeholder="confirm password" name="confirmPass"/></div>
         <strong style="color: darkred">${confirmError}</strong><br/>

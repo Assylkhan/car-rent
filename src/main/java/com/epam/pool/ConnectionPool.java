@@ -19,23 +19,24 @@ public class ConnectionPool {
     private static final Logger logger = Logger.getLogger(ConnectionPool.class);
     private static ResourceBundle bundle = ResourceBundle.getBundle("database");
 
-    public ConnectionPool(){}
+    public static class SingletonHolder {
+        public static final ConnectionPool POOL_INSTANCE = new ConnectionPool();
+    }
 
-    public ConnectionPool(ResourceBundle bundle){
+    public static ConnectionPool getInstance(){
+        return SingletonHolder.POOL_INSTANCE;
+    }
+
+    private ConnectionPool(){}
+
+    public void setConfig(ResourceBundle bundle){
         url = bundle.getString("url");
         driverClassName = bundle.getString("driver");
         user = bundle.getString("user");
         password = bundle.getString("password");
     }
 
-    public ConnectionPool(String driver, String url, String user, String password ){
-        this.driverClassName = driver;
-        this.url = url;
-        this.user = user;
-        this.password = password;
-    }
-
-    public void initConnections() throws SQLException {
+    public void init() throws SQLException {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {

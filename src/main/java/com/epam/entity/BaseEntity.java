@@ -2,7 +2,7 @@ package com.epam.entity;
 
 import java.io.Serializable;
 
-public class BaseEntity implements Serializable {
+public abstract class BaseEntity {
     private Long id;
 
     public Long getId() {

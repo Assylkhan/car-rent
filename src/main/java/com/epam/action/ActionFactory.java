@@ -16,8 +16,8 @@ public class ActionFactory {
         actions.put("GET/logout", new LogoutAction());
         actions.put("GET/register", new ShowPageAction("register"));
         actions.put("POST/register", new RegistrationAction());
-        actions.put("POST/doOrder", new DoOrderAction());
-        actions.put("GET/doOrder", new ShowPageAction("doOrder"));
+        actions.put("POST/sendApp", new SendAppAction());
+        actions.put("GET/sendApp", new ShowPageAction("sendApp"));
         actions.put("GET/orders", new ShowOrdersAction());
     }
 
