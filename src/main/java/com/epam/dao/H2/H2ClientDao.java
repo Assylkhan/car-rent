@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class H2ClientDao implements ClientDao {
-    public static final String INSERT_CLIENT = "INSERT INTO USER (LOGIN, PASSWORD, FIRST_NAME, LAST_NAME) VALUES (?, ?, ?, ?)";
-    public static final String SELECT_BY_LOGIN = "SELECT * FROM USER WHERE LOGIN = ?";
-    public static final String SELECT_BY_LOGIN_AND_PASSWORD = "SELECT * FROM USER WHERE LOGIN = ? AND PASSWORD = ?";
+    public static final String INSERT_CLIENT = "INSERT INTO CLIENT (LOGIN, PASSWORD, FIRST_NAME, LAST_NAME) VALUES (?, ?, ?, ?)";
+    public static final String SELECT_BY_LOGIN = "SELECT * FROM CLIENT WHERE LOGIN = ?";
+    public static final String SELECT_BY_LOGIN_AND_PASSWORD = "SELECT * FROM CLIENT WHERE LOGIN = ? AND PASSWORD = ?";
     private Connection connection = null;
 
     public H2ClientDao(Connection connection) {

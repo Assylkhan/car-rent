@@ -22,10 +22,10 @@ public class SendAppAction implements Action {
         Application application = createApplicationBean(req);
         Application insertedApplication = appService.insert(application);
         if (insertedApplication == null) {
-            req.setAttribute("insertApplication", "sending application failed");
+            req.setAttribute("insertApp", "sending application failed");
             return failed;
         }
-        req.setAttribute("insertApplication", "application has been sent successfully");
+        req.setAttribute("insertApp", "application has been sent successfully");
         return result;
     }
 

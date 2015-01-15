@@ -2,7 +2,9 @@ package com.epam.action;
 
 import com.epam.dao.*;
 import com.epam.entity.Client;
+import com.epam.util.HashGenerator;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,16 +16,16 @@ public class LoginAction implements Action {
 
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
-        String email = req.getParameter("email");
+        String login = req.getParameter("login");
         String password = req.getParameter("password");
-
-
-        DaoFactory factory = DaoFactory.getDaoFactory(DatabaseType.H2);
-        DaoManager daoManager = factory.getDaoManager();
+        ServletContext servletContext = req.getSession().getServletContext();
+        DaoFactory daoFactory = (DaoFactory)servletContext.getAttribute("daoFactory");
+        DaoManager daoManager = daoFactory.getDaoManager();
         Client client = null;
         try {
             ClientDao clientDao = daoManager.getClientDao();
-            client = clientDao.findByCredentials(email, password);
+            String generatedPassword = HashGenerator.passwordToHash(password);
+            client = clientDao.findByCredentials(login, generatedPassword);
         } catch (DaoException e) {
             System.err.println(e);
         } finally {
@@ -39,7 +41,7 @@ public class LoginAction implements Action {
             resp.addCookie(cookie);
             return home;
         } else {
-            req.setAttribute("loginError", "login or password incorrect");
+            req.setAttribute("loginError", "login or password is incorrect");
             return loginAgain;
         }
     }

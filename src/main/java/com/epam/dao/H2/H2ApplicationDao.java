@@ -32,13 +32,11 @@ public class H2ApplicationDao implements ApplicationDao {
             statement.setString(5, application.getEndPlace());
             statement.execute();
             ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) {
-                return application;
-            }
+            if (!resultSet.next()) return null;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
-        return null;
+        return application;
     }
 
     @Override

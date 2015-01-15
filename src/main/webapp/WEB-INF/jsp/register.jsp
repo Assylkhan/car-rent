@@ -2,7 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <link rel='stylesheet' href='webjars/bootstrap/3.3.1/css/bootstrap.min.css'>
+    <link rel="stylesheet" href="webjars/bootstrap/3.3.1/css/bootstrap.css">
     <link rel="stylesheet" href="/static/css/main.css">
     <title>Registration</title>
 </head>

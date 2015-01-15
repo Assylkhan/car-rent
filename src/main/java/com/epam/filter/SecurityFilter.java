@@ -1,8 +1,5 @@
 package com.epam.filter;
 
-import com.epam.entity.Role;
-import com.epam.entity.User;
-
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

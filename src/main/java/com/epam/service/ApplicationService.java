@@ -4,11 +4,13 @@ import com.epam.dao.*;
 import com.epam.entity.Application;
 import com.epam.entity.Car;
 import com.epam.entity.Client;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationService {
+    private static final Logger logger = Logger.getLogger(ApplicationService.class);
     private DaoFactory factory;
     public ApplicationService(DaoFactory factory){
         this.factory = factory;
@@ -64,12 +66,11 @@ public class ApplicationService {
     public Application insert(Application app){
         Application insertedApp = null;
         DaoManager daoManager = factory.getDaoManager();
-        daoManager.beginTransaction();
         try {
             ApplicationDao applicationDao = daoManager.getApplicationDao();
             insertedApp = applicationDao.insert(app);
         } catch (DaoException e) {
-            daoManager.rollback();
+          logger.error(e);
         } finally {
             daoManager.closeConnection();
         }

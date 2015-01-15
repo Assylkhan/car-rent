@@ -18,52 +18,21 @@
 </head>
 <body>
 <div class="container-fluid">
-    <form action="${pageContext.request.contextPath}/do/doOrder" method="POST">
+    <p><strong style="color: darkred">${insertApp}</strong></p>
+    <form action="${pageContext.request.contextPath}/do/sendApp" method="POST">
         <div class="form-group">
-            <label class="control-label"><fmt:message key="pickupDate"/></label>
-            <input type="date" placeholder="dd-mm-yyyy" name="pickupDate"/>
+            <label class="form-group">destination</label>
+            <input type="text" name="destination"/>
         </div>
         <div class="form-group">
-            <label class="control-label"><fmt:message key="returnDate"/></label>
-            <input type="date" name="returnDate"/>
+            <label class="control-label">start location</label>
+            <input type="date" name="startPlace"/>
         </div>
         <div class="form-group">
-            <label class="control-label"><fmt:message key="surname"/></label>
-            <input type="text" name="surname"/>
+            <label class="control-label">end location</label>
+            <input type="date" name="endPlace"/>
         </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="name"/></label>
-            <input type="text" name="name"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="citizenship"/></label>
-            <input type="text" name="citizenship"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="gender"/></label>
-            <input type="text" name="gender"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="birthDate"/></label>
-            <input type="date" name="birthDate"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="birthPlace"/></label>
-            <input type="text" name="birthPlace"/>
-        </div>
-        <div class="form-group">
-            <label class="form-group"><fmt:message key="issuedAgency"/></label>
-            <input type="text" name="issuedAgencyName"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="issuedDate"/></label>
-            <input type="date" name="issuedDate"/>
-        </div>
-        <div class="form-group">
-            <label class="control-label"><fmt:message key="validity"/></label>
-            <input type="date" name="validity"/>
-        </div>
-        <button class="btn btn-danger" type="submit"><fmt:message key="order"/></button>
+        <button class="btn btn-danger" type="submit">send application</button>
     </form>
 </div>
 </body>
