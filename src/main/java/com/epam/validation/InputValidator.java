@@ -7,7 +7,7 @@ public class InputValidator {
 //    private static final String EMAIL_REGEX = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" +
 //            "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|" +
 //            "biz|info|mobi|name|aero|asia|jobs|museum)\\b";
-    private static final String LOGIN_REGEX = "/^[a-zA-Z0-9_-]{3,32}$/";
+    private static final String LOGIN_REGEX = "^[a-zA-Z][a-zA-Z0-9-_\\.]{3,32}$";
 
     public static boolean login(String login){
         Pattern pattern = Pattern.compile(LOGIN_REGEX);

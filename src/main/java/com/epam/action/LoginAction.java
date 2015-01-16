@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class LoginAction implements Action {
-    ActionResult home = new ActionResult("home", true);
+    ActionResult sendApp = new ActionResult("sendApp", true);
     ActionResult loginAgain = new ActionResult("login");
 
     @Override
@@ -39,7 +39,7 @@ public class LoginAction implements Action {
             Cookie cookie = new Cookie("sessionId", id);
             cookie.setMaxAge(24*60*60); //24 hours
             resp.addCookie(cookie);
-            return home;
+            return sendApp;
         } else {
             req.setAttribute("loginError", "login or password is incorrect");
             return loginAgain;

@@ -11,6 +11,8 @@ import java.util.List;
 
 public class H2CarDao implements CarDao {
     private Connection connection = null;
+    private static final String SELECT_BY_ID = "SELECT * from CAR WHERE ID = ?";
+    private static final String SELECT = "SELECT * from CAR";
 
     @Override
     public Car insert(Car car) {
@@ -31,7 +33,7 @@ public class H2CarDao implements CarDao {
     public Car findById(Long id) throws DaoException{
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT * from CAR WHERE ID = ?");
+            statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             Boolean isResult = statement.execute();
             if (!isResult) return null;
@@ -58,7 +60,7 @@ public class H2CarDao implements CarDao {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * from CAR");
+            ResultSet resultSet = statement.executeQuery(SELECT);
             while (resultSet.next()){
                 Car car = new Car();
                 car.setId(resultSet.getLong("id"));

@@ -22,7 +22,11 @@
     <form action="${pageContext.request.contextPath}/do/sendApp" method="POST">
         <div class="form-group">
             <label class="form-group">destination</label>
-            <input type="text" name="destination"/>
+            <select name="destination">
+                <option value="VIP">vip</option>
+                <option value="USUALLY">usually</option>
+                <option value="ECONOM">econom</option>
+            </select>
         </div>
         <div class="form-group">
             <label class="control-label">start location</label>

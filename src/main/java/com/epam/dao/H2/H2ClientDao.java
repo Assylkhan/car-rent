@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class H2ClientDao implements ClientDao {
-    public static final String INSERT_CLIENT = "INSERT INTO CLIENT (LOGIN, PASSWORD, FIRST_NAME, LAST_NAME) VALUES (?, ?, ?, ?)";
-    public static final String SELECT_BY_LOGIN = "SELECT * FROM CLIENT WHERE LOGIN = ?";
-    public static final String SELECT_BY_LOGIN_AND_PASSWORD = "SELECT * FROM CLIENT WHERE LOGIN = ? AND PASSWORD = ?";
+    private static final String INSERT_CLIENT = "INSERT INTO CLIENT (LOGIN, PASSWORD, FIRST_NAME, LAST_NAME) VALUES (?, ?, ?, ?)";
+    private static final String SELECT_BY_LOGIN = "SELECT * FROM CLIENT WHERE LOGIN = ?";
+    private static final String SELECT_BY_LOGIN_AND_PASSWORD = "SELECT * FROM CLIENT WHERE LOGIN = ? AND PASSWORD = ?";
+    private static final String SELECT_BY_ID = "SELECT * FROM CLIENT WHERE ID = ?";
+    private static final String DELETE_BY_ID = "DELETE FROM CLIENT WHERE ID = ?";
     private Connection connection = null;
 
     public H2ClientDao(Connection connection) {
@@ -47,7 +49,7 @@ public class H2ClientDao implements ClientDao {
     public boolean deleteById(Long id) throws DaoException {
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("DELETE FROM USER WHERE ID = ?");
+            statement = connection.prepareStatement(DELETE_BY_ID);
             statement.setLong(1, id);
             ResultSet resultSet = statement.getResultSet();
             if (resultSet.next()) {
@@ -65,7 +67,7 @@ public class H2ClientDao implements ClientDao {
         PreparedStatement statement = null;
         Client client = new Client();
         try {
-            statement = connection.prepareCall("SELECT * FROM USER WHERE ID = ?");
+            statement = connection.prepareCall(SELECT_BY_ID);
             statement.setLong(1, id);
             statement.executeQuery();
             ResultSet resultSet = statement.getResultSet();

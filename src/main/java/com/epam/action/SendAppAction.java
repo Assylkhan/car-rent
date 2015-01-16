@@ -2,7 +2,6 @@ package com.epam.action;
 
 import com.epam.dao.DaoFactory;
 import com.epam.entity.Application;
-import com.epam.entity.Car;
 import com.epam.entity.Client;
 import com.epam.entity.Destination;
 import com.epam.service.ApplicationService;
@@ -34,9 +33,6 @@ public class SendAppAction implements Action {
         Client client = new Client();
         client.setId(Long.valueOf(req.getParameter("clientId")));
         app.setClient(client);
-        Car car = new Car();
-        car.setId(Long.valueOf(req.getParameter("carId")));
-        app.setCar(car);
         app.setDestination(Destination.valueOf(req.getParameter("destination")));
         app.setStartPlace(req.getParameter("startPlace"));
         app.setEndPlace(req.getParameter("endPlace"));

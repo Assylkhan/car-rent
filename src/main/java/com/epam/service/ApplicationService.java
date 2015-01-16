@@ -2,7 +2,6 @@ package com.epam.service;
 
 import com.epam.dao.*;
 import com.epam.entity.Application;
-import com.epam.entity.Car;
 import com.epam.entity.Client;
 import org.apache.log4j.Logger;
 
@@ -22,14 +21,11 @@ public class ApplicationService {
         try {
             daoManager.beginTransaction();
             ClientDao clientDao = daoManager.getClientDao();
-            CarDao carDao = daoManager.getCarDao();
             ApplicationDao applicationDao = daoManager.getApplicationDao();
             List<Application> notFullApps = applicationDao.findAll();
             for (Application app : notFullApps){
                 Client client = clientDao.findById(app.getClient().getId());
-                Car car = carDao.findById(app.getCar().getId());
                 app.setClient(client);
-                app.setCar(car);
                 applications.add(app);
             }
             daoManager.commit();
@@ -47,13 +43,10 @@ public class ApplicationService {
         try {
             daoManager.beginTransaction();
             ClientDao clientDao = daoManager.getClientDao();
-            CarDao carDao = daoManager.getCarDao();
             ApplicationDao applicationDao = daoManager.getApplicationDao();
             application = applicationDao.findById(id);
             Client client = clientDao.findById(application.getClient().getId());
-            Car car = carDao.findById(application.getCar().getId());
             application.setClient(client);
-            application.setCar(car);
             daoManager.commit();
         } catch (DaoException e) {
             daoManager.rollback();
@@ -70,12 +63,10 @@ public class ApplicationService {
             ApplicationDao applicationDao = daoManager.getApplicationDao();
             insertedApp = applicationDao.insert(app);
         } catch (DaoException e) {
-          logger.error(e);
+            logger.error(e);
         } finally {
             daoManager.closeConnection();
         }
         return insertedApp;
     }
-
-
 }

@@ -53,10 +53,15 @@ public class RegistrationAction implements Action {
         login = req.getParameter("login");
         password = req.getParameter("password");
         confirmPass = req.getParameter("confirmPass");
-
-        if (!InputValidator.login(login)){
-
+        if (login.isEmpty() || login == null){
+            req.setAttribute("loginError", "login can't be blank");
+            isValid = false;
+        } else if (!InputValidator.login(login)){
             req.setAttribute("loginError", "incorrect login");
+            isValid = false;
+        }
+        if (password.isEmpty() || password == null){
+            req.setAttribute("passwordError", "password can't be blank");
             isValid = false;
         }
         if (!password.equals(confirmPass)) {

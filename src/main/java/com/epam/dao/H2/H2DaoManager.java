@@ -65,6 +65,12 @@ public class H2DaoManager implements DaoManager {
     }
 
     @Override
+    public DriverDao getDriverDao() throws DaoException {
+        if (connection == null) throw new DaoException("no connection");
+        return new H2DriverDao(connection);
+    }
+
+    @Override
     public ApplicationDao getApplicationDao() throws DaoException {
         if (connection == null) throw new DaoException("no connection");
         return new H2ApplicationDao(connection);

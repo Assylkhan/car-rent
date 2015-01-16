@@ -2,7 +2,6 @@ package com.epam.dao.H2;
 
 import com.epam.dao.*;
 import com.epam.entity.Application;
-import com.epam.entity.Car;
 import com.epam.entity.Client;
 import com.epam.entity.Destination;
 
@@ -26,13 +25,11 @@ public class H2ApplicationDao implements ApplicationDao {
         try {
             statement = connection.prepareStatement(INSERT_APPLICATION);
             statement.setLong(1, application.getClient().getId());
-            statement.setLong(2, application.getCar().getId());
-            statement.setString(3, application.getDestination().toString());
-            statement.setString(4, application.getStartPlace());
-            statement.setString(5, application.getEndPlace());
-            statement.execute();
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (!resultSet.next()) return null;
+            statement.setString(2, application.getDestination().toString());
+            statement.setString(3, application.getStartPlace());
+            statement.setString(4, application.getEndPlace());
+            boolean inserted = statement.execute();
+            if (!inserted) return null;
         } catch (SQLException e) {
             throw new DaoException(e);
         }
@@ -71,9 +68,6 @@ public class H2ApplicationDao implements ApplicationDao {
         Client client = new Client();
         client.setId(rs.getLong("CLIENT_ID"));
         application.setClient(client);
-        Car car = new Car();
-        car.setId(rs.getLong("CAR_ID"));
-        application.setCar(car);
         application.setDestination(Destination.valueOf(rs.getString("DESTINATION")));
         application.setStartPlace(rs.getString("START_PLACE"));
         application.setEndPlace(rs.getString("END_PLACE"));

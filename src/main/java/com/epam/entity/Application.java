@@ -2,7 +2,6 @@ package com.epam.entity;
 
 public class Application extends BaseEntity {
     private Client client;
-    private Car car;
     private Destination destination;
     private String startPlace;
     private String endPlace;
@@ -13,14 +12,6 @@ public class Application extends BaseEntity {
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
     }
 
     public Destination getDestination() {
