@@ -9,7 +9,7 @@ public class FlightSubmitAction implements Action {
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
         if (req.getPathInfo().equals("flightStarted"))
         {
-            req.getSession().getAttribute("app")
+            req.getSession().getAttribute("app");
         }
         return null;
     }

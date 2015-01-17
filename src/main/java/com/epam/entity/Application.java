@@ -1,10 +1,13 @@
 package com.epam.entity;
 
+import java.sql.Timestamp;
+
 public class Application extends BaseEntity {
     private Client client;
     private Destination destination;
     private String startPlace;
     private String endPlace;
+    private Timestamp time;
 
     public Client getClient() {
         return client;
@@ -36,5 +39,13 @@ public class Application extends BaseEntity {
 
     public void setEndPlace(String endPlace) {
         this.endPlace = endPlace;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 }

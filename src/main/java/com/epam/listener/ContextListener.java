@@ -12,6 +12,7 @@ public class ContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContext servletContext = sce.getServletContext();
+
         factory = DaoFactory.getDaoFactory(DatabaseType.H2);
         servletContext.setAttribute("daoFactory", factory);
         System.out.println("context initialized");

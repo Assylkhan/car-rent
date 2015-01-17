@@ -71,6 +71,7 @@ public class H2ApplicationDao implements ApplicationDao {
         application.setDestination(Destination.valueOf(rs.getString("DESTINATION")));
         application.setStartPlace(rs.getString("START_PLACE"));
         application.setEndPlace(rs.getString("END_PLACE"));
+        application.setTime(rs.getTimestamp("TIME"));
         return application;
     }
 

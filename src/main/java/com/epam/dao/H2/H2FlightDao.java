@@ -19,7 +19,7 @@ public class H2FlightDao implements FlightDao {
     @Override
     public Flight insert(Flight newEntity) throws DaoException {
         PreparedStatement statement = null;
-        connection.prepareStatement("INSERT INTO FLIGHT ()")
+//        connection.prepareStatement("INSERT INTO FLIGHT ()");
         return null;
     }
 

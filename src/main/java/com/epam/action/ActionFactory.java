@@ -21,6 +21,7 @@ public class ActionFactory {
         actions.put("GET/drivers", new DriversAction());
         actions.put("GET/flightStarted", new FlightSubmitAction());
         actions.put("POST/reportDriver", new FlightSubmitAction());
+        actions.put("GET/chooseDriver", new ChooseDriverAction());
     }
 
     public Action getAction(String actionName){

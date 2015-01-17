@@ -25,6 +25,7 @@
         <th>start location</th>
         <th>end location</th>
         <th>car type</th>
+        <th>time</th>
         <c:forEach items="${applications}" var="app">
             <tr>
                 <td>${app.id}</td>
@@ -32,9 +33,10 @@
                 <td>${app.startPlace}</td>
                 <td>${app.endPlace}</td>
                 <td>${app.destination}</td>
+                <td>${app.time}</td>
                 <td>
                     <form action="${pageContext.request.contextPath}/do/chooseDriver">
-                        <input type="hidden" value="${app}" name="app">
+                        <input type="hidden" value="${app.id}" name="app">
                         <button type="submit">report to driver</button>
                     </form>
                 </td>

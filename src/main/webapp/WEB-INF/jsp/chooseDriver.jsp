@@ -21,13 +21,20 @@
     <th>is free</th>
     <th>current location</th>
     <c:forEach items="${drivers}" var="driver">
-        <tr onclick="document.location = '${pageContext.request.contextPath}/do/reportDriver'">
+        <tr>
             <td>${driver.id}</td>
             <td>${driver.firt_name}</td>
             <td>${driver.last_name}</td>
             <td>${driver.phone}</td>
             <td>${driver.isFree}</td>
             <td>${driver.currentLocation}</td>
+            <td>
+                <form action="${pageContext.request.contextPath}/do/reportDriver">
+                    <input type="hidden" name="appId" value="${app.id}"/>
+                    <input type="hidden" name="driverId" value="${driver.id}"/>
+                    <button type="submit" class="btn btn-success">choose</button>
+                </form>
+            </td>
         </tr>
     </c:forEach>
 </table>
