@@ -93,6 +93,17 @@ public class ConnectionPool {
     private class PooledConnection implements Connection {
         private Connection connection;
 
+        private long timeOpened;
+        private long timeClosed;
+
+        public long getTimeOpened() {
+            return timeOpened;
+        }
+
+        public long getTimeClosed() {
+            return timeClosed;
+        }
+
         public PooledConnection(Connection connection) throws SQLException {
             this.connection = connection;
             this.connection.setAutoCommit(true);
