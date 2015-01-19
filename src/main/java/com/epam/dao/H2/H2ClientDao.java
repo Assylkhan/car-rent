@@ -22,22 +22,24 @@ public class H2ClientDao implements ClientDao {
 
     @Override
     public Client insert(Client client) throws DaoException {
+        Client insertedClient = null;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
             statement = connection.prepareStatement(INSERT_CLIENT);
             statement.setString(1, client.getLogin());
             statement.setString(2, client.getPassword());
             statement.setString(3, client.getFirstName());
             statement.setString(4, client.getLastName());
-            statement.execute();
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) {
-                return client;
-            }
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) insertedClient = getClientBean(resultSet);
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
-        return null;
+        return insertedClient;
     }
 
     @Override
@@ -48,110 +50,110 @@ public class H2ClientDao implements ClientDao {
     @Override
     public boolean deleteById(Long id) throws DaoException {
         PreparedStatement statement = null;
+        boolean executed = false;
         try {
             statement = connection.prepareStatement(DELETE_BY_ID);
             statement.setLong(1, id);
-            ResultSet resultSet = statement.getResultSet();
-            if (resultSet.next()) {
-                return true;
-            } else {
-                return false;
-            }
+            executed = statement.execute();
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { statement.close(); } catch (SQLException e) {};
         }
+        return executed;
     }
 
     @Override
     public Client findById(Long id) throws DaoException {
         PreparedStatement statement = null;
-        Client client = new Client();
+        ResultSet resultSet = null;
+        Client client = null;
         try {
             statement = connection.prepareCall(SELECT_BY_ID);
             statement.setLong(1, id);
             statement.executeQuery();
-            ResultSet resultSet = statement.getResultSet();
+            resultSet = statement.getResultSet();
             if (resultSet.next()) {
-                client.setId(resultSet.getLong("id"));
-                client.setLogin(resultSet.getString("login"));
-                client.setPassword(resultSet.getString("password"));
-                client.setFirstName(resultSet.getString("first_name"));
-                client.setLastName(resultSet.getString("last_name"));
-                client.setBill(resultSet.getBigDecimal("bill"));
+                client = getClientBean(resultSet);
             }
-            return client;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
+        return client;
     }
 
     @Override
     public Client findByLogin(String login) throws DaoException {
-        Client client = new Client();
+        Client client = null;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
             statement = connection.prepareStatement(SELECT_BY_LOGIN);
             statement.setString(1, login);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                client.setId(resultSet.getLong("id"));
-                client.setLogin(resultSet.getString("login"));
-                client.setPassword(resultSet.getString("password"));
-                client.setFirstName(resultSet.getString("first_name"));
-                client.setLastName(resultSet.getString("last_name"));
-                client.setBill(resultSet.getBigDecimal("bill"));
+                client = getClientBean(resultSet);
             }
-            return client;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
+        return client;
     }
 
     @Override
     public Client findByCredentials(String login, String password) throws DaoException {
-        Client client = new Client();
+        Client client = null;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
             statement = connection.prepareStatement(SELECT_BY_LOGIN_AND_PASSWORD);
             statement.setString(1, login);
             statement.setString(2, password);
-            boolean isResult = statement.execute();
-            if (!isResult) return null;
-
-            ResultSet resultSet = statement.getResultSet();
-            resultSet.next();
-            client.setId(resultSet.getLong("ID"));
-            client.setLogin(login);
-            client.setPassword(password);
-            client.setFirstName(resultSet.getString("first_name"));
-            client.setLastName(resultSet.getString("last_name"));
-            client.setBill(resultSet.getBigDecimal("bill"));
-            return client;
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) client = getClientBean(resultSet);
         } catch (Exception e) {
             throw new DaoException();
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
+        return client;
     }
 
     @Override
     public List<Client> findAll() throws DaoException {
-        Client client = new Client();
         List<Client> clients = new ArrayList<>();
         Statement statement = null;
+        ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM USER");
+            resultSet = statement.executeQuery("SELECT * FROM USER");
             while (resultSet.next()) {
-                client.setId(resultSet.getLong("ID"));
-                client.setLogin(resultSet.getString("login"));
-                client.setPassword(resultSet.getString("password"));
-                client.setFirstName(resultSet.getString("first_name"));
-                client.setLastName(resultSet.getString("last_name"));
-                client.setBill(resultSet.getBigDecimal("bill"));
-                clients.add(client);
+                clients.add(getClientBean(resultSet));
             }
         } catch (Exception e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
         return clients;
+    }
+
+    public Client getClientBean(ResultSet resultSet) throws SQLException {
+        Client client = new Client();
+        client.setId(resultSet.getLong("ID"));
+        client.setFirstName(resultSet.getString("FIRST_NAME"));
+        client.setLastName(resultSet.getString("LAST_NAME"));
+        client.setLogin(resultSet.getString("LOGIN"));
+        client.setPassword(resultSet.getString("PASSWORD"));
+        client.setBill(resultSet.getBigDecimal("BILL"));
+        return client;
     }
 }

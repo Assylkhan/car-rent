@@ -32,13 +32,14 @@ public class H2CarDao implements CarDao {
     @Override
     public Car findById(Long id) throws DaoException{
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
             statement = connection.prepareStatement(SELECT_BY_ID);
             statement.setLong(1, id);
             Boolean isResult = statement.execute();
             if (!isResult) return null;
 
-            ResultSet resultSet = statement.getResultSet();
+            resultSet = statement.getResultSet();
             Car car = new Car();
             car.setId(resultSet.getLong("id"));
             car.setModel(resultSet.getString("model"));
@@ -51,6 +52,9 @@ public class H2CarDao implements CarDao {
             return car;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
     }
 
@@ -58,9 +62,10 @@ public class H2CarDao implements CarDao {
     public List<Car> findAll() throws DaoException{
         List<Car> cars = new ArrayList<>();
         Statement statement = null;
+        ResultSet resultSet = null;
         try {
             statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(SELECT);
+            resultSet = statement.executeQuery(SELECT);
             while (resultSet.next()){
                 Car car = new Car();
                 car.setId(resultSet.getLong("id"));
@@ -75,6 +80,9 @@ public class H2CarDao implements CarDao {
             return cars;
         } catch (SQLException e){
             throw new DaoException();
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
     }
 

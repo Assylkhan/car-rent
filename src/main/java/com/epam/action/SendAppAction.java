@@ -9,9 +9,10 @@ import com.epam.service.ApplicationService;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class SendAppAction implements Action {
-    private ActionResult result = new ActionResult("home", true);
+    private ActionResult result = new ActionResult("clientProfile", true);
     private ActionResult failed = new ActionResult("sendApp");
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
@@ -30,8 +31,8 @@ public class SendAppAction implements Action {
 
     public Application createApplicationBean(HttpServletRequest req){
         Application app = new Application();
-        Client client = new Client();
-        client.setId(Long.valueOf(req.getParameter("clientId")));
+        HttpSession session = req.getSession();
+        Client client = (Client)session.getAttribute("client");
         app.setClient(client);
         app.setDestination(Destination.valueOf(req.getParameter("destination")));
         app.setStartPlace(req.getParameter("startPlace"));

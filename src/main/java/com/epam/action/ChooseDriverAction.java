@@ -3,14 +3,13 @@ package com.epam.action;
 import com.epam.dao.*;
 import com.epam.entity.Application;
 import com.epam.entity.Driver;
-import com.epam.util.DriverCache;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 public class ChooseDriverAction implements Action {
+    ActionResult result = new ActionResult("applications", true);
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
         ServletContext sc = req.getServletContext();
@@ -25,12 +24,12 @@ public class ChooseDriverAction implements Action {
             ApplicationDao appDao = daoManager.getApplicationDao();
             Application app = appDao.findById(appId);
             driver.getApplications().add(app);
-            DriverCache driverCache = DriverCache.getInstance();
-//            driverCache.put("driver");
-
+            daoManager.commit();
         } catch (DaoException e) {
-            e.printStackTrace();
+            daoManager.rollback();
+        } finally {
+            daoManager.closeConnection();
         }
-        return null;
+        return result;
     }
 }

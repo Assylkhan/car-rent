@@ -52,14 +52,12 @@ public class H2DaoManager implements DaoManager {
 
     @Override
     public ClientDao getClientDao() throws DaoException {
-//        Connection connection = createConnection();
         if (connection == null) throw new DaoException("no connection");
         return new H2ClientDao(connection);
     }
 
     @Override
     public CarDao getCarDao() throws DaoException {
-//        Connection connection = createConnection();
         if (connection == null) throw new DaoException("no connection");
         return new H2CarDao(connection);
     }

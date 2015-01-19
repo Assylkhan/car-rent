@@ -11,6 +11,7 @@ public class ActionFactory {
 
         actions.put("GET/", new ShowPageAction("welcome"));
         actions.put("GET/applications", new ShowAppsAction());
+        actions.put("GET/home", new ShowPageAction("home"));
         actions.put("GET/login", new ShowPageAction("login"));
         actions.put("POST/login", new LoginAction());
         actions.put("GET/logout", new LogoutAction());

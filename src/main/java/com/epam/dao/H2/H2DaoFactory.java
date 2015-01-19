@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 public class H2DaoFactory extends DaoFactory {
     private static final ResourceBundle resource = ResourceBundle.getBundle("database");
     private ConnectionPool pool = null;
-//    private static H2DaoFactory instance;
 
     public H2DaoFactory(){
         pool = ConnectionPool.getInstance();

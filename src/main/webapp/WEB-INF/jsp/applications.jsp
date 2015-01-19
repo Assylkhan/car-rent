@@ -10,6 +10,7 @@
 <html>
 <head>
     <title>Applications</title>
+    <script type="text/javascript" src="/static/js/webSocket.js"/>
 </head>
 <body>
 <header class="navbar navbar-brand">

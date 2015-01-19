@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class H2ApplicationDao implements ApplicationDao {
-    public static final String INSERT_APPLICATION = "INSERT INTO APPLICATION (CLIENT_ID, CAR_ID, DESTINATION, START_PLACE, END_PLACE) VALUES (?, ?, ?, ?, ?)";
+    public static final String INSERT_APPLICATION = "INSERT INTO APPLICATION (CLIENT_ID, DESTINATION, START_PLACE, END_PLACE) VALUES (?, ?, ?, ?)";
     public static final String FIND_BY_ID = "SELECT * FROM APPLICATION WHERE ID = ?";
     public static final String FIND_ALL = "SELECT * FROM APPLICATION";
     private Connection connection;
@@ -22,18 +22,26 @@ public class H2ApplicationDao implements ApplicationDao {
     @Override
     public Application insert(Application application) throws DaoException {
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Application insertedApp = null;
         try {
             statement = connection.prepareStatement(INSERT_APPLICATION);
             statement.setLong(1, application.getClient().getId());
             statement.setString(2, application.getDestination().toString());
             statement.setString(3, application.getStartPlace());
             statement.setString(4, application.getEndPlace());
-            boolean inserted = statement.execute();
-            if (!inserted) return null;
+            statement.executeUpdate();
+            resultSet = statement.getGeneratedKeys();
+            while (resultSet.next()){
+                insertedApp = getApplicationBean(resultSet);
+            }
+            return insertedApp;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
-        return application;
     }
 
     @Override
@@ -49,16 +57,21 @@ public class H2ApplicationDao implements ApplicationDao {
     @Override
     public Application findById(Long id) throws DaoException {
         Application application = new Application();
+        ResultSet resultSet = null;
+        PreparedStatement statement = null;
         try {
-            PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
+            statement = connection.prepareStatement(FIND_BY_ID);
             statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             while (resultSet.next()){
                 application = getApplicationBean(resultSet);
             }
             return application;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
     }
 
@@ -79,15 +92,20 @@ public class H2ApplicationDao implements ApplicationDao {
     @Override
     public List<Application> findAll() throws DaoException {
         List<Application> applications  = new ArrayList<>();
+        Statement statement = null;
+        ResultSet resultSet = null;
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(FIND_ALL);
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery(FIND_ALL);
             while (resultSet.next()){
                 applications.add(getApplicationBean(resultSet));
             }
             return applications;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
     }
 }

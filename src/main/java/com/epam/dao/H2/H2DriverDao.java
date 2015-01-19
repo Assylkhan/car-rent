@@ -41,20 +41,24 @@ public class H2DriverDao implements DriverDao {
     @Override
     public List<Driver> findAll() throws DaoException {
         List<Driver> drivers = new ArrayList<>();
+        Statement statement = null;
+        ResultSet resultSet = null;
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM DRIVER");
+            statement = connection.createStatement();
+            resultSet = statement.executeQuery("SELECT * FROM DRIVER");
             while (resultSet.next()){
-                Driver driver = createDriverBean(resultSet);
-                drivers.add(driver);
+                drivers.add(getDriverBean(resultSet));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
         return drivers;
     }
 
-    private Driver createDriverBean(ResultSet resultSet) throws SQLException {
+    private Driver getDriverBean(ResultSet resultSet) throws SQLException {
         Driver driver = new Driver();
         driver.setId(resultSet.getLong("id"));
         driver.setPhone(resultSet.getString("phone"));

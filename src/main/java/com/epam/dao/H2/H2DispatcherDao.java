@@ -33,13 +33,14 @@ public class H2DispatcherDao implements DispatcherDao {
 
     @Override
     public Dispatcher findById(Long id) throws DaoException {
+        Dispatcher dispatcher = null;
         PreparedStatement statement = null;
-        Dispatcher dispatcher = new Dispatcher();
+        ResultSet resultSet = null;
         try {
             statement = connection.prepareCall(SELECT_BY_ID);
             statement.setLong(1, id);
             statement.executeQuery();
-            ResultSet resultSet = statement.getResultSet();
+            resultSet = statement.getResultSet();
             if (resultSet.next()) {
                 dispatcher.setId(resultSet.getLong("ID"));
                 dispatcher.setLogin(resultSet.getString("login"));
@@ -49,33 +50,17 @@ public class H2DispatcherDao implements DispatcherDao {
                 dispatcher.setNationalId(resultSet.getInt("national_id"));
                 dispatcher.setPhone(resultSet.getString("phone"));
             }
-            return dispatcher;
         } catch (SQLException e) {
             throw new DaoException(e);
+        } finally {
+            try { resultSet.close(); } catch (SQLException e) {};
+            try { statement.close(); } catch (SQLException e) {};
         }
+        return dispatcher;
     }
 
     @Override
     public List<Dispatcher> findAll() throws DaoException {
-        Dispatcher dispatcher = new Dispatcher();
-        List<Dispatcher> dispatchers = new ArrayList<>();
-        Statement statement = null;
-        try {
-            statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM USER");
-            while (resultSet.next()) {
-                dispatcher.setId(resultSet.getLong("ID"));
-                dispatcher.setLogin(resultSet.getString("login"));
-                dispatcher.setPassword(resultSet.getString("password"));
-                dispatcher.setFirstName(resultSet.getString("first_name"));
-                dispatcher.setLastName(resultSet.getString("last_name"));
-                dispatcher.setNationalId(resultSet.getInt("national_id"));
-                dispatcher.setPhone(resultSet.getString("phone"));
-                dispatchers.add(dispatcher);
-            }
-        } catch (Exception e) {
-            throw new DaoException(e);
-        }
-        return dispatchers;
+        return null;
     }
 }
