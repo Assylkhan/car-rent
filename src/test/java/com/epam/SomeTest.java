@@ -16,12 +16,16 @@ public class SomeTest {
             public void run() {
                 try {
                     Connection connection = pool.getConnection();
+                    Thread.sleep(2000);
                     System.out.println("created connection");
                 } catch (SQLException e) {
                     System.err.println(e);
+                } catch (InterruptedException e) {
+
                 }
             }
         };
+
 
     }
 
