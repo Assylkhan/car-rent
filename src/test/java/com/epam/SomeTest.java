@@ -1,23 +1,20 @@
 package com.epam;
 
+import com.epam.pool.ConnectionPool;
+import com.epam.pool.Connector;
+
 public class SomeTest {
-//    private static ResourceBundle resourceBundle = ResourceBundle.getBundle("database");
-//    private static ConnectionPool pool = new ConnectionPool(resourceBundle);
 
     public static void main(String[] args) {
+        ConnectionPool pool = new ConnectionPool(100);
+        pool.setConnector(new Connector());
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
 
-        WorkerThread workerThread = new WorkerThread();
-        workerThread.start();
-        try {
-            workerThread.join();
-        } catch (InterruptedException e) {
-            System.err.println(e);
-        }
-//        try {
-//            Thread.sleep(7500);
-//        } catch (InterruptedException e) {
-//        }
-        System.out.println("Main Thread ending");
+            }
+        };
+
     }
 
 }

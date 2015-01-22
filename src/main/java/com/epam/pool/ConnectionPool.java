@@ -76,7 +76,7 @@ public class ConnectionPool {
     }
 
     private PooledConnection getNewConnection() throws SQLException {
-        return (PooledConnection) connector.getConnection();
+        return new PooledConnection(connector.getConnection());
     }
 
     public void setDriverClassName(String driverClassName) {

@@ -3,6 +3,7 @@ package com.epam.dao.H2;
 import com.epam.dao.DaoException;
 import com.epam.dao.DaoFactory;
 import com.epam.pool.ConnectionPool;
+import com.epam.pool.Connector;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,8 +15,7 @@ public class H2DaoFactory extends DaoFactory {
 
     public H2DaoFactory(){
         pool = new ConnectionPool(10);
-        pool.setConfig(resource);
-        pool.setMaxConnectionCount(100);
+        pool.setConnector(new Connector());
         try {
             pool.init();
         } catch (SQLException e) {

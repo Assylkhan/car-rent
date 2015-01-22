@@ -60,10 +60,10 @@ public class Connector {
     }
 
     public Connection getConnection() throws SQLException {
-        url = bundle.getString("url");
-        user = bundle.getString("user");
-        password = bundle.getString("password");
-        driverClassName = bundle.getString("driver");
+        if (url == null) url = bundle.getString("url");
+        if (user == null) user = bundle.getString("user");
+        if (password == null) password = bundle.getString("password");
+        if (driverClassName == null) driverClassName = bundle.getString("driver");
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
