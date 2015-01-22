@@ -16,6 +16,7 @@ public class SomeTest {
             public void run() {
                 try {
                     Connection connection = pool.getConnection();
+                    System.out.println("created connection");
                 } catch (SQLException e) {
                     System.err.println(e);
                 }
