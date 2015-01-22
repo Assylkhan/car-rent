@@ -6,11 +6,17 @@ public class SomeTest {
 
     public static void main(String[] args) {
 
-        new WorkerThread().start();
+        WorkerThread workerThread = new WorkerThread();
+        workerThread.start();
         try {
-            Thread.sleep(7500);
+            workerThread.join();
         } catch (InterruptedException e) {
+            System.err.println(e);
         }
+//        try {
+//            Thread.sleep(7500);
+//        } catch (InterruptedException e) {
+//        }
         System.out.println("Main Thread ending");
     }
 

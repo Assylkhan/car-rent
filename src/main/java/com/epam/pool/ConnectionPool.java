@@ -2,10 +2,11 @@ package com.epam.pool;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class ConnectionPool {
@@ -13,23 +14,19 @@ public class ConnectionPool {
     private String url;
     private String user;
     private String password;
-    private int connectionNumber;
-    private Semaphore semaphore;
-    private List<PooledConnection> freeConnections;
+    private int maxConnectionCount;
+    private int connCount;
+    private BlockingQueue<PooledConnection> freeConnections;
     private static final Logger logger = Logger.getLogger(ConnectionPool.class);
     private static ResourceBundle bundle = ResourceBundle.getBundle("database");
+    private long maxIdleTime = 30 * 1000; // 30 seconds
+    private int checkInterval = 30 * 1000;
 
-    public static class SingletonHolder {
-        public static final ConnectionPool POOL_INSTANCE = new ConnectionPool();
+    public ConnectionPool(int connectionNumber) {
+        freeConnections = new ArrayBlockingQueue<PooledConnection>(maxConnectionCount);
     }
 
-    public static ConnectionPool getInstance(){
-        return SingletonHolder.POOL_INSTANCE;
-    }
-
-    private ConnectionPool(){}
-
-    public void setConfig(ResourceBundle bundle){
+    public void setConfig(ResourceBundle bundle) {
         url = bundle.getString("url");
         driverClassName = bundle.getString("driver");
         user = bundle.getString("user");
@@ -40,42 +37,68 @@ public class ConnectionPool {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
-            logger.log(Level.ERROR, null, e);
+            throw new SQLException(e);
         }
-        semaphore = new Semaphore(connectionNumber);
-        freeConnections = new LinkedList<PooledConnection>();
-
-        for (int i = 0; i < connectionNumber; i++) {
+        for (int i = 0; i < 3; i++) {
             Connection connection = DriverManager.getConnection(url, user, password);
             PooledConnection pooledConnection = new PooledConnection(connection);
-            freeConnections.add(pooledConnection);
+            try {
+                freeConnections.put(pooledConnection);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
+            pooledConnection.setInUse(false);
         }
-        logger.info(connectionNumber + " connections created");
+        PoolCleaner cleaner = new PoolCleaner(checkInterval);
+        cleaner.setDaemon(true);
+        cleaner.start();
+        logger.info(maxConnectionCount + " connections created");
     }
 
-    public void setConnectionNumber(int connectionNumber) {
-        this.connectionNumber = connectionNumber;
+    public void setMaxConnectionCount(int maxConnectionCount) {
+        this.maxConnectionCount = maxConnectionCount;
     }
 
-    public synchronized Connection getConnection() {
-        PooledConnection pooledConnection = null;
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            logger.log(Level.ERROR, null, e);
+    public synchronized Connection getConnection() throws SQLException {
+        PooledConnection connection = freeConnections.poll();
+        if (connection == null) {
+            if (connCount < maxConnectionCount) {
+                connection = getNewConnection();
+                freeConnections.offer(connection);
+                connCount++;
+            } else {
+                try {
+                    connection = freeConnections.take();
+                } catch (InterruptedException e) {
+                    logger.error(e);
+                }
+            }
         }
-        System.out.println("available connections: " + semaphore.availablePermits());
-        pooledConnection = freeConnections.remove(0);
-        return pooledConnection;
+        connection.setInUse(true);
+        return connection;
+    }
+
+    private PooledConnection getNewConnection() throws SQLException {
+        return (PooledConnection) DriverManager.getConnection(url, user, password);
     }
 
     public void setDriverClassName(String driverClassName) {
         this.driverClassName = driverClassName;
     }
 
-    public void closeConnections(){
-        int releaseNumber = connectionNumber - semaphore.availablePermits();
-        semaphore.release(releaseNumber);
+    public void closeConnections() {
+        for (PooledConnection pooledConnection : freeConnections) {
+            try {
+                pooledConnection.connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        freeConnections.clear();
+    }
+
+    private void removeExpired() {
+
     }
 
     public void setUrl(String url) {
@@ -94,19 +117,43 @@ public class ConnectionPool {
         private Connection connection;
 
         private long timeOpened;
-        private long timeClosed;
+        private long addedToQueueTime;
+        private boolean inUse;
+
+        public boolean isInUse() {
+            return inUse;
+        }
+
+        public void setInUse(boolean inUse) {
+            this.inUse = inUse;
+        }
 
         public long getTimeOpened() {
             return timeOpened;
         }
 
-        public long getTimeClosed() {
-            return timeClosed;
+        public long getAddedToQueueTime() {
+            return addedToQueueTime;
         }
 
         public PooledConnection(Connection connection) throws SQLException {
             this.connection = connection;
             this.connection.setAutoCommit(true);
+        }
+
+        @Override
+        public synchronized void close() throws SQLException {
+            if (connection.isReadOnly()) {
+                connection.setReadOnly(false);
+            }
+            this.setInUse(false);
+            try {
+                freeConnections.put(this);
+            } catch (InterruptedException e) {
+                logger.error(e);
+            }
+            this.addedToQueueTime = System.currentTimeMillis();
+            System.out.println("released connection");
         }
 
         @Override
@@ -147,16 +194,6 @@ public class ConnectionPool {
         @Override
         public void rollback() throws SQLException {
             connection.rollback();
-        }
-
-        @Override
-        public void close() throws SQLException {
-            if (connection.isReadOnly()) {
-                connection.setReadOnly(false);
-            }
-            freeConnections.add(this);
-            System.out.println("released connection");
-            semaphore.release();
         }
 
         @Override
@@ -382,6 +419,43 @@ public class ConnectionPool {
         @Override
         public boolean isWrapperFor(Class<?> iface) throws SQLException {
             return connection.isWrapperFor(iface);
+        }
+    }
+
+    private class PoolCleaner extends Thread {
+        private int checkInterval;
+        private BlockingQueue<Connection> freeConnections;
+
+        public PoolCleaner(int checkInterval) {
+            if (checkInterval < 0) throw new IllegalArgumentException("checking interval must be larger than 0");
+            this.checkInterval = checkInterval;
+        }
+
+        public void closeExpired() {
+            Iterator<Connection> connections = freeConnections.iterator();
+            for (Connection connection = connections.next(); connections.hasNext(); ) {
+                PooledConnection pooledConnection = (PooledConnection) connection;
+                long maxIdleTime = System.currentTimeMillis() - pooledConnection.addedToQueueTime;
+                if (!pooledConnection.isInUse() && pooledConnection.addedToQueueTime == maxIdleTime) {
+                    try {
+                        pooledConnection.close();
+                    } catch (SQLException e) {
+                        System.err.println(e);
+                    }
+                    boolean remove = freeConnections.remove(connection);
+                    logger.info(remove);
+                } else if (pooledConnection.addedToQueueTime < maxIdleTime) break;
+            }
+        }
+
+        @Override
+        public void run() {
+            closeExpired();
+            try {
+                sleep(checkInterval);
+            } catch (InterruptedException e) {
+                System.err.println(e);
+            }
         }
     }
 }
