@@ -3,6 +3,9 @@ package com.epam;
 import com.epam.pool.ConnectionPool;
 import com.epam.pool.Connector;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class SomeTest {
 
     public static void main(String[] args) {
@@ -11,7 +14,11 @@ public class SomeTest {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-
+                try {
+                    Connection connection = pool.getConnection();
+                } catch (SQLException e) {
+                    System.err.println(e);
+                }
             }
         };
 
