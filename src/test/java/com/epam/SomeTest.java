@@ -5,6 +5,8 @@ import com.epam.pool.Connector;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SomeTest {
 
@@ -25,6 +27,14 @@ public class SomeTest {
                 }
             }
         };
+        List<Thread> threads = new ArrayList<>();
+        for (int i = 0; i <50 ; i++) {
+            threads.add(new Thread(runnable));
+        }
+        for (int i = 0; i < 50; i++) {
+            Thread thread = threads.get(i);
+            thread.start();
+        }
 
 
     }
