@@ -5,48 +5,45 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 
 public class ConnectionPool {
     private String driverClassName;
-    private String url;
-    private String user;
-    private String password;
-    private int maxConnectionCount;
     private int connCount;
+    private int maxConnectionCount;
+    private Connector connector;
     private BlockingQueue<PooledConnection> freeConnections;
     private static final Logger logger = Logger.getLogger(ConnectionPool.class);
     private static ResourceBundle bundle = ResourceBundle.getBundle("database");
     private long maxIdleTime = 30 * 1000; // 30 seconds
     private int checkInterval = 30 * 1000;
 
-    public ConnectionPool(int connectionNumber) {
-        freeConnections = new ArrayBlockingQueue<PooledConnection>(maxConnectionCount);
+    public ConnectionPool(int maxConnectionCount) {
+        this.maxConnectionCount = maxConnectionCount;
     }
 
-    public void setConfig(ResourceBundle bundle) {
-        url = bundle.getString("url");
-        driverClassName = bundle.getString("driver");
-        user = bundle.getString("user");
-        password = bundle.getString("password");
+    public ConnectionPool() {
+    }
+
+    public void setConnector(Connector connector) {
+        this.connector = connector;
+    }
+
+    public Connector getConnector() {
+        return connector;
     }
 
     public void init() throws SQLException {
-        try {
-            Class.forName(driverClassName);
-        } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
-        }
+        freeConnections = new ArrayBlockingQueue<PooledConnection>(maxConnectionCount);
         for (int i = 0; i < 3; i++) {
-            Connection connection = DriverManager.getConnection(url, user, password);
-            PooledConnection pooledConnection = new PooledConnection(connection);
+            PooledConnection pooledConnection = getNewConnection();
             try {
                 freeConnections.put(pooledConnection);
             } catch (InterruptedException e) {
                 logger.error(e);
             }
+            connCount++;
             pooledConnection.setInUse(false);
         }
         PoolCleaner cleaner = new PoolCleaner(checkInterval);
@@ -79,7 +76,7 @@ public class ConnectionPool {
     }
 
     private PooledConnection getNewConnection() throws SQLException {
-        return (PooledConnection) DriverManager.getConnection(url, user, password);
+        return (PooledConnection) connector.getConnection();
     }
 
     public void setDriverClassName(String driverClassName) {
@@ -99,18 +96,6 @@ public class ConnectionPool {
 
     private void removeExpired() {
 
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     private class PooledConnection implements Connection {

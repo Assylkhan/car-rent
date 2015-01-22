@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="3324690741">
+    <data-source source="LOCAL" name="database.h2" uuid="86c08e87-036c-40b8-8587-d129db39ea4a">
+      <driver-ref>h2.embedded</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:D:\Documents\Asik\IdeaProjects\carRent\database</jdbc-url>
+      <libraries>
+        <library>
+          <url>jar://$MAVEN_REPOSITORY$/com/h2database/h2/1.3.176/h2-1.3.176.jar!/</url>
+        </library>
+      </libraries>
+    </data-source>
+    <data-source source="LOCAL" name="H2 - database@localhost" uuid="9625a683-d00d-4186-8553-8bfb5118c8ef">
+      <driver-ref>h2.remote</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:tcp://localhost/~/database</jdbc-url>
+      <libraries />
+    </data-source>
+  </component>
+</project>
