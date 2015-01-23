@@ -11,11 +11,11 @@ public class Connector {
     private String url;
     private String user;
     private String password;
-    private int maxConnectionCount;
 
-    public Connector(){}
+    public Connector() {
+    }
 
-    public Connector(String driverClassName){
+    public Connector(String driverClassName) {
         this.driverClassName = driverClassName;
     }
 
@@ -51,19 +51,11 @@ public class Connector {
         this.password = password;
     }
 
-    public int getMaxConnectionCount() {
-        return maxConnectionCount;
-    }
-
-    public void setMaxConnectionCount(int maxConnectionCount) {
-        this.maxConnectionCount = maxConnectionCount;
-    }
-
     public Connection getConnection() throws SQLException {
+        if (driverClassName == null) driverClassName = bundle.getString("driver");
         if (url == null) url = bundle.getString("url");
         if (user == null) user = bundle.getString("user");
         if (password == null) password = bundle.getString("password");
-        if (driverClassName == null) driverClassName = bundle.getString("driver");
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
