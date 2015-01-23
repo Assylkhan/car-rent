@@ -11,6 +11,7 @@
     <title></title>
 </head>
 <body>
+<%@include file="header.jspf"%>
 <form action="${pageContext.request.contextPath}/do/flightStarted" method="get">
   <input type="hidden" value="started"/>
   <button type="submit">started</button>

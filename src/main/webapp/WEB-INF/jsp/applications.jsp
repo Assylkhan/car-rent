@@ -13,11 +13,12 @@
     <script type="text/javascript" src="/static/js/webSocket.js"/>
 </head>
 <body>
-<header class="navbar navbar-brand">
+<%@include file="header.jspf"%>
+<%--<header class="navbar navbar-brand">
     <ul class="list-unstyled pull-right" style="margin: 15px;">
         <li><strong><a href="${pageContext.request.contextPath}/do/logout">logout</a></strong></li>
     </ul>
-</header>
+</header>--%>
 <div class="container">
 
     <table>

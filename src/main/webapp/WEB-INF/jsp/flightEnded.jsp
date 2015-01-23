@@ -11,6 +11,7 @@
     <title></title>
 </head>
 <body>
+<%@include file="header.jspf"%>
 <form action="${pageContext.request.contextPath}/do/flightEnded" method="get">
   <input type="hidden" value="ended"/>
   <button type="submit">ended</button>

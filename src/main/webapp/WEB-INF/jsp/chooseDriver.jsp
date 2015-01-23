@@ -12,6 +12,7 @@
     <title>Drivers</title>
 </head>
 <body>
+<%@include file="header.jspf"%>
 
 <table>
     <th>id</th>

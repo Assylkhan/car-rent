@@ -14,7 +14,7 @@ public class SomeTest {
 
     public static void main(String[] args) {
         List<Thread> threads = new ArrayList<>();
-        ConnectionPool pool = new ConnectionPool(100);
+        ConnectionPool pool = new ConnectionPool(10);
         pool.setConnector(new Connector());
         try {
             pool.init();
@@ -28,7 +28,7 @@ public class SomeTest {
             @Override
             public void run() {
                 System.out.println("size: "+pool.getFreeConnections().size());
-                boolean isTerminated = true;
+                /*boolean isTerminated = true;
                 for (Thread thread : threads){
                     if (thread.isAlive()){
                         isTerminated = false;
@@ -39,7 +39,7 @@ public class SomeTest {
                     pool.closeConnections();
                     System.out.println("closed all connections");
                     timer.cancel();
-                }
+                }*/
             }
         };
 
@@ -51,7 +51,7 @@ public class SomeTest {
                         Connection connection = pool.getConnection();
                         connections.add(connection);
                         Thread.sleep(ran.nextInt(100));
-                        connection.close();
+//                        connection.close();
                     }
                     System.out.println("closed in main connection");
                 } catch (SQLException e) {
@@ -67,8 +67,8 @@ public class SomeTest {
         timer.scheduleAtFixedRate(timerTask, 500, 1000);
         for (int i = 0; i < 50; i++) {
             Thread thread = threads.get(i);
-            System.out.println(i + "-th");
             thread.start();
+            System.out.println(i + "-th");
 //            daemonT.start();
         }
 

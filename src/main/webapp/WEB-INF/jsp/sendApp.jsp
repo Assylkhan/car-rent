@@ -17,6 +17,7 @@
     <title>Order</title>
 </head>
 <body>
+<%@include file="header.jspf"%>
 <div class="container-fluid">
     <p><strong style="color: darkred">${insertApp}</strong></p>
     <form action="${pageContext.request.contextPath}/do/sendApp" method="POST">

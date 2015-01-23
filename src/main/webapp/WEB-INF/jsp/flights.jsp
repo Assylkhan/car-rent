@@ -11,6 +11,7 @@
     <title>Flights</title>
 </head>
 <body>
+<%@include file="header.jspf"%>
 
 </body>
 </html>

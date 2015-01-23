@@ -25,6 +25,14 @@ public class ConnectionPool {
     private Lock lock = new ReentrantLock();
     private PoolCleaner cleaner;
 
+    public int getMinConnectionCount() {
+        return minConnectionCount;
+    }
+
+    public void setMinConnectionCount(int minConnectionCount) {
+        this.minConnectionCount = minConnectionCount;
+    }
+
     public int getMaxConnectionCount() {
         return maxConnectionCount;
     }
