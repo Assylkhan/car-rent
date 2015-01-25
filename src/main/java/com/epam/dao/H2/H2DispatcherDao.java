@@ -90,4 +90,8 @@ public class H2DispatcherDao implements DispatcherDao {
     public List<Dispatcher> findAll() throws DaoException {
         return null;
     }
+
+    private Dispatcher getDispatcherBean(ResultSet resultSet){
+        return null;
+    }
 }
