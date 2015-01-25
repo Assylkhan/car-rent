@@ -2,6 +2,8 @@ package com.epam.action;
 
 import com.epam.dao.*;
 import com.epam.entity.Client;
+import com.epam.entity.Role;
+import com.epam.service.ClientService;
 import com.epam.util.HashGenerator;
 
 import javax.servlet.ServletContext;
@@ -16,16 +18,20 @@ public class LoginAction implements Action {
 
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
-        String role = req.getParameter("role");
+        Role role = Role.valueOf((req.getParameter("role")));
         String login = req.getParameter("login");
         String password = req.getParameter("password");
+        String generatedPassword = HashGenerator.passwordToHash(password);
         ServletContext servletContext = req.getSession().getServletContext();
         DaoFactory daoFactory = (DaoFactory)servletContext.getAttribute("daoFactory");
-        DaoManager daoManager = daoFactory.getDaoManager();
+        switch (role){
+            case CLIENT:
+                ClientService service = new ClientService(daoFactory);
+
+        }
         Client client = null;
         try {
             ClientDao clientDao = daoManager.getClientDao();
-            String generatedPassword = HashGenerator.passwordToHash(password);
             client = clientDao.findByCredentials(login, generatedPassword);
         } catch (DaoException e) {
             System.err.println(e);

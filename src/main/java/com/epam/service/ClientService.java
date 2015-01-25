@@ -26,6 +26,19 @@ public class ClientService {
             daoManager.closeConnection();
         }
         return insertedClient;
+    }
 
+    public Client findByCredentials(String login, String password){
+        DaoManager daoManager = factory.getDaoManager();
+        Client client = null;
+        try {
+            ClientDao clientDao = daoManager.getClientDao();
+            client = clientDao.findByCredentials(login, password);
+        } catch (DaoException e) {
+
+        } finally {
+            daoManager.closeConnection();
+        }
+        return client;
     }
 }
