@@ -15,11 +15,10 @@ public class H2DaoFactory extends DaoFactory {
 
     public H2DaoFactory(){
         pool = new ConnectionPool(10);
-        pool.setConnector(new Connector());
         try {
             pool.init();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println(e);
         }
     }
 
@@ -33,11 +32,7 @@ public class H2DaoFactory extends DaoFactory {
         try {
             connection = pool.getConnection();
         } catch (SQLException e) {
-            try {
-                throw new DaoException(e);
-            } catch (DaoException e1) {
 
-            }
         }
         return new H2DaoManager(connection);
     }

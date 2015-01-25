@@ -5,7 +5,6 @@ import com.epam.dao.DispatcherDao;
 import com.epam.entity.Dispatcher;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class H2DispatcherDao implements DispatcherDao {
@@ -17,7 +16,7 @@ public class H2DispatcherDao implements DispatcherDao {
     }
 
     @Override
-    public Dispatcher insert(Dispatcher newEntity) throws DaoException {
+    public Long insert(Dispatcher newEntity) throws DaoException {
         return null;
     }
 

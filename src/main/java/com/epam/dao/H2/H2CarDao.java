@@ -15,7 +15,7 @@ public class H2CarDao implements CarDao {
     private static final String SELECT = "SELECT * from CAR";
 
     @Override
-    public Car insert(Car car) {
+    public Long insert(Car car) {
         return null;
     }
 

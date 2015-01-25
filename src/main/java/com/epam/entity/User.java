@@ -1,6 +1,6 @@
 package com.epam.entity;
 
-public abstract class User extends BaseEntity {
+public class User extends BaseEntity {
     private Role role;
     private String firstName;
     private String lastName;

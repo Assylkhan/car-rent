@@ -21,8 +21,8 @@ public class H2ClientDao implements ClientDao {
     }
 
     @Override
-    public Client insert(Client client) throws DaoException {
-        Client insertedClient = null;
+    public Long insert(Client client) throws DaoException {
+        Long id = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
@@ -32,14 +32,14 @@ public class H2ClientDao implements ClientDao {
             statement.setString(3, client.getFirstName());
             statement.setString(4, client.getLastName());
             resultSet = statement.executeQuery();
-            if (resultSet.next()) insertedClient = getClientBean(resultSet);
+            if (resultSet.next()) id = resultSet.getLong("ID");
         } catch (SQLException e) {
             throw new DaoException(e);
         } finally {
             try { resultSet.close(); } catch (SQLException e) {};
             try { statement.close(); } catch (SQLException e) {};
         }
-        return insertedClient;
+        return id;
     }
 
     @Override

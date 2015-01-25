@@ -13,8 +13,10 @@ public class ActionFactory {
         actions.put("GET/applications", new ShowAppsAction());
         actions.put("GET/home", new ShowPageAction("home"));
         actions.put("GET/login", new ShowPageAction("login"));
+        actions.put("GET/clientProfile", new ShowPageAction("clientProfile"));
         actions.put("POST/login", new LoginAction());
         actions.put("GET/logout", new LogoutAction());
+        actions.put("GET/registerDispathcer", new ShowPageAction("registerDispatcher"));
         actions.put("GET/register", new ShowPageAction("register"));
         actions.put("POST/register", new RegistrationAction());
         actions.put("POST/sendApp", new SendAppAction());

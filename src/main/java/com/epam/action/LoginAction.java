@@ -16,6 +16,7 @@ public class LoginAction implements Action {
 
     @Override
     public ActionResult execute(HttpServletRequest req, HttpServletResponse resp) {
+        String role = req.getParameter("role");
         String login = req.getParameter("login");
         String password = req.getParameter("password");
         ServletContext servletContext = req.getSession().getServletContext();

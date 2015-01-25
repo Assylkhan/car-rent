@@ -10,8 +10,8 @@
 <%@ include file="header.jspf"%>
 <div class="container-fluid">
     <form action="${pageContext.request.contextPath}/do/register" method="post">
+        <input type="hidden" name="role" value="CLIENT"/>
         <strong style="color: darkred">${loginError}</strong> <br/>
-
         <div class="form-group"><input type="text" placeholder="first name" name="firstName"/></div>
         <div class="form-group"><input type="text" placeholder="last name" name="lastName"/></div>
         <div class="form-group"><input type="text" placeholder="login" name="login"/></div>

@@ -73,4 +73,10 @@ public class H2DaoManager implements DaoManager {
         if (connection == null) throw new DaoException("no connection");
         return new H2ApplicationDao(connection);
     }
+
+    @Override
+    public DispatcherDao getDispatcherDao() throws DaoException {
+        if (connection == null) throw new DaoException("no connection");
+        return new H2DispatcherDao(connection);
+    }
 }

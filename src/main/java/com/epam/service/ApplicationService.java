@@ -61,7 +61,8 @@ public class ApplicationService {
         DaoManager daoManager = factory.getDaoManager();
         try {
             ApplicationDao applicationDao = daoManager.getApplicationDao();
-            insertedApp = applicationDao.insert(app);
+            Long appId = applicationDao.insert(app);
+            insertedApp = applicationDao.findById(appId);
         } catch (DaoException e) {
             logger.error(e);
         } finally {

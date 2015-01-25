@@ -19,7 +19,7 @@ public class H2DriverDao implements DriverDao {
     }
 
     @Override
-    public Driver insert(Driver newEntity) throws DaoException {
+    public Long insert(Driver newEntity) throws DaoException {
         return null;
     }
 

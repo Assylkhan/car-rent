@@ -5,25 +5,27 @@ import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 
 public class ConnectionPool {
-    private String driverClassName;
-    private AtomicInteger connCount = new AtomicInteger(0);
+    private int usingConns;
     private int maxConnectionCount;
     private int minConnectionCount = 5;
-    private Connector connector;
+    private Connector connector = new Connector();
     private BlockingQueue<PooledConnection> freeConnections;
-    private static final Logger logger = Logger.getLogger(ConnectionPool.class);
-    private static ResourceBundle bundle = ResourceBundle.getBundle("database");
-    private long maxIdleTime = 5 * 1000; // 5 seconds
-    private int checkInterval = 5 * 1000;
+    private final Logger logger = Logger.getLogger(ConnectionPool.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("database");
+    private long maxIdleTime = 30 * 1000; // 5 seconds
+    private int checkInterval = 30 * 1000;
     private Lock lock = new ReentrantLock();
     private PoolCleaner cleaner;
+
+    public int getUsingConns() {
+        return usingConns;
+    }
 
     public int getMinConnectionCount() {
         return minConnectionCount;
@@ -63,16 +65,15 @@ public class ConnectionPool {
             PooledConnection pooledConnection = getNewConnection();
             try {
                 freeConnections.put(pooledConnection);
+                pooledConnection.addedToQueueTime = System.currentTimeMillis();
             } catch (InterruptedException e) {
                 logger.error(e);
             }
-            connCount.incrementAndGet();
-            pooledConnection.setInUse(false);
         }
         cleaner = new PoolCleaner(checkInterval);
         cleaner.start();
         System.out.println("cleaner started at last!");
-        logger.info(maxConnectionCount + " connections created");
+        logger.info(minConnectionCount + " connections created");
     }
 
     public void setMaxConnectionCount(int maxConnectionCount) {
@@ -83,23 +84,20 @@ public class ConnectionPool {
         synchronized (freeConnections) {
             PooledConnection connection = freeConnections.poll();
             if (connection == null) {
-                if (connCount.get() >= maxConnectionCount) {
-                    connection = getNewConnection();
-                    freeConnections.offer(connection);
-                    connCount.incrementAndGet();
-                    System.out.println("opened and added to queue new conn");
+                if (usingConns < maxConnectionCount) {
+                    freeConnections.offer(getNewConnection());
+                    connection = freeConnections.poll();
                 } else {
                     try {
-                        System.out.println("waiting for connection in take()");
                         connection = freeConnections.take();
-                        System.out.println("got connection");
+                        System.out.println("got waited connection");
                     } catch (InterruptedException e) {
                         logger.error(e);
                     }
                 }
             }
+            usingConns++;
             System.out.println("conn've been taken");
-            connection.setInUse(true);
             if (cleaner == null) {
                 cleaner = new PoolCleaner(checkInterval);
                 cleaner.start();
@@ -113,43 +111,21 @@ public class ConnectionPool {
         return pooledConnection;
     }
 
-    public void setDriverClassName(String driverClassName) {
-        this.driverClassName = driverClassName;
-    }
-
     public void closeConnections() {
         for (PooledConnection pooledConnection : freeConnections) {
             try {
                 pooledConnection.connection.close();
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.err.println(e);
             }
         }
         freeConnections.clear();
         if (cleaner != null) cleaner.terminateCleaner();
     }
 
-    private void removeExpired() {
-
-    }
-
     private class PooledConnection implements Connection {
         private Connection connection;
-        private long timeOpened;
         private long addedToQueueTime;
-        private boolean inUse;
-
-        public boolean inUse() {
-            return inUse;
-        }
-
-        public void setInUse(boolean inUse) {
-            this.inUse = inUse;
-        }
-
-        public long getTimeOpened() {
-            return timeOpened;
-        }
 
         public long getAddedToQueueTime() {
             return addedToQueueTime;
@@ -162,12 +138,13 @@ public class ConnectionPool {
 
         @Override
         public synchronized void close() throws SQLException {
+            System.out.println("inside close");
             if (connection.isReadOnly()) {
                 connection.setReadOnly(false);
             }
-            this.setInUse(false);
             try {
                 freeConnections.put(this);
+                usingConns--;
             } catch (InterruptedException e) {
                 logger.error(e);
             }
@@ -442,30 +419,29 @@ public class ConnectionPool {
     }
 
     public void closeExpired() {
-        Iterator<PooledConnection> connections = freeConnections.iterator();
-        while (connections.hasNext()) {
-            PooledConnection pooledConnection = connections.next();
-            long idleTime = System.currentTimeMillis() - pooledConnection.addedToQueueTime;
-            System.out.println("expired before if: " + idleTime + ">=" + maxIdleTime);
-            if (pooledConnection.inUse() == false && idleTime >= maxIdleTime) {
-                System.out.println("inside if statement");
-                try {
-                    pooledConnection.connection.close();
-                } catch (SQLException e) {
-                    System.err.println(e);
+        synchronized (freeConnections) {
+            Iterator<PooledConnection> connections = freeConnections.iterator();
+            while (connections.hasNext()) {
+                PooledConnection pooledConnection = connections.next();
+                long idleTime = System.currentTimeMillis() - pooledConnection.addedToQueueTime;
+                System.out.println("expired before if: " + idleTime + ">=" + maxIdleTime);
+                if (idleTime >= maxIdleTime) {
+                    System.out.println("inside if statement");
+                    try {
+                        pooledConnection.connection.close();
+                    } catch (SQLException e) {
+                        System.err.println("closeExpired: " + e);
+                    }
+                    boolean remove = freeConnections.remove(pooledConnection);
+//                pooledConnection = null;
+                    System.out.println("usingConns reduced: " + usingConns);
                 }
-                boolean remove = freeConnections.remove(pooledConnection);
-                pooledConnection = null;
-                connCount.decrementAndGet();
-                System.out.println("connCount reduced: " + connCount);
-                logger.info(remove);
-                System.out.println("closed expired one");
             }
-        }
-        if (freeConnections.size() == 0 && cleaner != null) {
-            System.out.println("size before terminate: "+freeConnections.size());
-            cleaner.terminateCleaner();
-            cleaner = null;
+            if (freeConnections.size() == 0 && cleaner != null) {
+                System.out.println("size before terminate: " + freeConnections.size());
+                cleaner.terminateCleaner();
+                cleaner = null;
+            }
         }
     }
 

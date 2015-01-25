@@ -15,10 +15,6 @@ public class Connector {
     public Connector() {
     }
 
-    public Connector(String driverClassName) {
-        this.driverClassName = driverClassName;
-    }
-
     public String getDriverClassName() {
         return driverClassName;
     }

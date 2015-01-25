@@ -9,6 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
+    <link rel='stylesheet' href='<c:url value="/webjars/bootstrap/3.3.1/css/bootstrap.css"/>'>
     <title>Profile</title>
 </head>
 <body>
@@ -16,9 +17,9 @@
 <div class="container">
     <p>${insertApp}</p><br/>
 
-    <p>first name: ${client.first_name}</p>
+    <p class="btn btn-danger">first name: ${client.firstName}</p>
 
-    <p>last name: ${client.last_name}</p>
+    <p>last name: ${client.lastName}</p>
 
     <p>login: ${client.login}</p>
 

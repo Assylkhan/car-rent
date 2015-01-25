@@ -10,9 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class H2ApplicationDao implements ApplicationDao {
-    public static final String INSERT_APPLICATION = "INSERT INTO APPLICATION (CLIENT_ID, DESTINATION, START_PLACE, END_PLACE) VALUES (?, ?, ?, ?)";
+    public static final String INSERT_APPLICATION = "INSERT INTO APPLICATION (ID, CLIENT_ID, DESTINATION, START_PLACE, END_PLACE) VALUES (NULL, ?, ?, ?, ?)";
     public static final String FIND_BY_ID = "SELECT * FROM APPLICATION WHERE ID = ?";
     public static final String FIND_ALL = "SELECT * FROM APPLICATION";
+//    private static final String[] APPLICATION_COLUMNS = new String[]{"ID"};
+
     private Connection connection;
 
     public H2ApplicationDao(Connection connection) {
@@ -20,22 +22,20 @@ public class H2ApplicationDao implements ApplicationDao {
     }
 
     @Override
-    public Application insert(Application application) throws DaoException {
+    public Long insert(Application application) throws DaoException {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        Application insertedApp = null;
         try {
-            statement = connection.prepareStatement(INSERT_APPLICATION);
+            statement = connection.prepareStatement(INSERT_APPLICATION, PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setLong(1, application.getClient().getId());
             statement.setString(2, application.getDestination().toString());
             statement.setString(3, application.getStartPlace());
             statement.setString(4, application.getEndPlace());
             statement.executeUpdate();
             resultSet = statement.getGeneratedKeys();
-            while (resultSet.next()){
-                insertedApp = getApplicationBean(resultSet);
-            }
-            return insertedApp;
+            Long id = null;
+            if (resultSet.next()) id = resultSet.getLong(1);
+            return id;
         } catch (SQLException e) {
             throw new DaoException(e);
         } finally {
@@ -77,14 +77,14 @@ public class H2ApplicationDao implements ApplicationDao {
 
     private Application getApplicationBean(ResultSet rs) throws SQLException {
         Application application = new Application();
-        application.setId(rs.getLong("ID"));
+        application.setId(rs.getLong(1));
         Client client = new Client();
-        client.setId(rs.getLong("CLIENT_ID"));
+        client.setId(rs.getLong(2));
         application.setClient(client);
-        application.setDestination(Destination.valueOf(rs.getString("DESTINATION")));
-        application.setStartPlace(rs.getString("START_PLACE"));
-        application.setEndPlace(rs.getString("END_PLACE"));
-        application.setTime(rs.getTimestamp("TIME"));
+        application.setDestination(Destination.valueOf(rs.getString(3)));
+        application.setStartPlace(rs.getString(4));
+        application.setEndPlace(rs.getString(5));
+        application.setTime(rs.getTimestamp(6));
         return application;
     }
 

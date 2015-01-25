@@ -5,7 +5,6 @@ import com.epam.entity.Application;
 import com.epam.entity.Client;
 import com.epam.entity.Destination;
 import com.epam.service.ApplicationService;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +24,8 @@ public class SendAppAction implements Action {
             req.setAttribute("insertApp", "sending application failed");
             return failed;
         }
-        req.setAttribute("insertApp", "application has been sent successfully");
+
+        req.setAttribute("flash.insertApp", "application has been sent successfully");
         return result;
     }
 
