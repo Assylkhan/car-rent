@@ -30,6 +30,11 @@ public class H2DispatcherDao implements DispatcherDao {
         return false;
     }
 
+    public Dispatcher findByLogin(String login) throws DaoException {
+
+        return null;
+    }
+
     @Override
     public Dispatcher findById(Long id) throws DaoException {
         Dispatcher dispatcher = null;
